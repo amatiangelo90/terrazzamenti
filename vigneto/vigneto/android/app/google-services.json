@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "741578504366",
+    "firebase_url": "https://vigneto-e835f-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "vigneto-e835f",
+    "storage_bucket": "vigneto-e835f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:741578504366:android:13fab44c530a77c506153f",
+        "android_client_info": {
+          "package_name": "com.amaticorp.vigneto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "741578504366-md56hjgvrbpokgnlisefj6f0afrmoikn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjdC3oZAD2vRQOiSpZbgSWGb_gqvzBAnE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "741578504366-md56hjgvrbpokgnlisefj6f0afrmoikn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
