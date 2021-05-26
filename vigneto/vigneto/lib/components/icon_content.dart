@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vigneto/utils/costants.dart';
 
 class IconContent extends StatelessWidget {
 
@@ -16,7 +17,7 @@ class IconContent extends StatelessWidget {
       children: <Widget>[
         Icon(
           icon,
-          size: 80.0,
+          size: 70.0,
           color: color,
         ),
         SizedBox(width: 30.0,),
@@ -24,7 +25,7 @@ class IconContent extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Text(
             label,
-            style: TextStyle(color: Colors.white, fontSize: 16.0, fontFamily: 'LoraFont'),
+            style: TextStyle(color: VIGNETO_BROWN, fontSize: 16.0, fontFamily: 'LoraFont'),
           ),
         ),
         Padding(
@@ -32,7 +33,7 @@ class IconContent extends StatelessWidget {
           child: Center(
             child: Text(
               description,
-              style: TextStyle(color: Colors.white, fontSize: 16.0, fontFamily: 'LoraFont'),
+              style: TextStyle(color: VIGNETO_BROWN, fontSize: 16.0, fontFamily: 'LoraFont'),
             ),
           ),
         )

@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:vigneto/reservation/reservation.dart';
 import 'package:vigneto/screen/home_vigneto.dart';
+import 'package:vigneto/screen/reserve_order_screen.dart';
 import 'package:vigneto/screen/splash_screen_vigneto.dart';
 import 'package:vigneto/screen/table_covers_screen.dart';
 
@@ -29,13 +31,15 @@ class MyApp extends StatelessWidget {
           if(snapshot.connectionState == ConnectionState.done){
             return MaterialApp(
                 debugShowCheckedModeBanner: false,
-                title: 'Vigneto Menu',
-                initialRoute: SplashScreenVigneto.id,
+                title: 'Terrazzamenti Menu',
+                initialRoute: SplashScreenTerrazzamenti.id,
                 routes:{
-                  SplashScreenVigneto.id : (context) => SplashScreenVigneto(),
+                  SplashScreenTerrazzamenti.id : (context) => SplashScreenTerrazzamenti(),
                   TerrazzamentiHomeScreen.id : (context) => TerrazzamentiHomeScreen(),
                   TableCoversScreen.id : (context) => TableCoversScreen(),
                   AdminConsoleMenuScreen.id : (context) => AdminConsoleMenuScreen(),
+                  ReserveOrderChooseScreen.id : (context) => ReserveOrderChooseScreen(),
+                  TableReservationScreen.id : (context) => TableReservationScreen(),
                 }
             );
           }

@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:vigneto/screen/table_covers_screen.dart';
+import 'package:vigneto/screen/reserve_order_screen.dart';
+import 'package:vigneto/utils/costants.dart';
 
-class SplashScreenVigneto extends StatefulWidget {
+class SplashScreenTerrazzamenti extends StatefulWidget {
   static String id = 'splash';
   @override
-  _SplashScreenVignetoState createState() => _SplashScreenVignetoState();
+  _SplashScreenTerrazzamentiState createState() => _SplashScreenTerrazzamentiState();
 }
 
-class _SplashScreenVignetoState extends State<SplashScreenVigneto> {
+class _SplashScreenTerrazzamentiState extends State<SplashScreenTerrazzamenti> {
 
   @override
   Widget build(BuildContext context) {
@@ -16,18 +17,12 @@ class _SplashScreenVignetoState extends State<SplashScreenVigneto> {
     return SafeArea(
       child: GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, TableCoversScreen.id);
+          Navigator.pushNamed(context, ReserveOrderChooseScreen.id);
         },
         child: Container(
-          color: Colors.black,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Image.asset('images/logo.jpg',
-                fit: BoxFit.contain,
-              ),
-            ],
+          color: VIGNETO_BROWN,
+          child: Image.asset('images/logo.jpg',
+            fit: BoxFit.fitHeight,
           ),
         ),
       ),
@@ -37,6 +32,6 @@ class _SplashScreenVignetoState extends State<SplashScreenVigneto> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(milliseconds: 3000), ()=> Navigator.pushNamed(context, TableCoversScreen.id));
+    Timer(Duration(milliseconds: 3000), ()=> Navigator.pushNamed(context, ReserveOrderChooseScreen.id));
   }
 }

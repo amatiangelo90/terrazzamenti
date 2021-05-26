@@ -99,10 +99,16 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
       length: 2,
       child: Scaffold(
         backgroundColor: Colors.black,
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Colors.black,
+          title: Text('Conferma ordine', style: TextStyle(color: Colors.white, fontSize: 15.0, fontFamily: 'LoraFont')),
+        ),
         body: ListView(
           children: [
+
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(10.0),
               child: Container(
                 height: screenHeight - 50,
                 width: screenWidth - 50,
@@ -114,23 +120,16 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                   children: [
                     Column(
                       children: [
+                        Image.asset('images/terrazzament.png',
+                          fit: BoxFit.contain,
+                        ),
                         Card(
                           color: Colors.black,
                           elevation: 0.0,
                           child: Column(
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  GestureDetector(
-                                    child: Text('Indietro', style: TextStyle(color: Colors.white, fontSize: 17.0, fontFamily: 'LoraFont'),),
-                                    onTap: () => Navigator.of(context).pop(false),
-                                  ),
-                                ],
-                              ),
-                              Center(child: Text('Dettagli Ordine', style: TextStyle(color: Colors.white, fontSize: 15.0, fontFamily: 'LoraFont'),),),
                               Padding(
-                                padding: const EdgeInsets.all(1.0),
+                                padding: const EdgeInsets.all(10.0),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -139,6 +138,17 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                                 ),
                               ),
 
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(5.0, 0.0, 5.0, 0.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text('Tavolo: ' + this.widget.tableNumber, style: TextStyle(color: Colors.white, fontSize: 15.0, fontFamily: 'LoraFont')),
+
+                              Text('Coperti: ' + this.widget.covers, style: TextStyle(color: Colors.white, fontSize: 15.0, fontFamily: 'LoraFont')),
                             ],
                           ),
                         ),
@@ -267,7 +277,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                               },
                             );
                           } else{
-                            HttpService.sendMessage(numberVigneto,
+                            HttpService.sendMessage(numberTerrazzamenti,
                                 buildMessageFromCartPickUp(
                                     this.widget.cartItems,
                                     _nameController.value.text,
@@ -326,7 +336,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
     String message;
 
     message =
-            "%0a Terrazzamenti Valle D'Itria%0a"+
+        "%0a Terrazzamenti Valle D'Itria%0a"+
             "%0a Tavolo: $tableNumber%0a"+
             " Coperti: $covers%0a%0a"+
             "%0a Nome: $name" +
@@ -368,33 +378,51 @@ class TimeSlotPickup {
 
   static List<TimeSlotPickup> getPickupSlots() {
 
+    DateTime currentDatePlus10Min = DateTime.now().add(Duration(minutes: 10));
+
+    String firstSlot;
+    String secondSlot;
+
+    if(currentDatePlus10Min.hour < 17){
+      firstSlot = '17:15';
+      secondSlot = '17:30';
+    }else{
+      if(currentDatePlus10Min.minute >= 0 && currentDatePlus10Min.minute < 15){
+        firstSlot = currentDatePlus10Min.hour.toString() + ':15';
+        secondSlot = currentDatePlus10Min.hour.toString() + ':30';
+      }else if(currentDatePlus10Min.minute >= 15 && currentDatePlus10Min.minute < 30){
+        firstSlot = currentDatePlus10Min.hour.toString() + ':30';
+        secondSlot = currentDatePlus10Min.hour.toString() + ':45';
+      }else if(currentDatePlus10Min.minute >= 30 && currentDatePlus10Min.minute < 45){
+        firstSlot = currentDatePlus10Min.hour.toString() + ':45';
+        secondSlot = (currentDatePlus10Min.hour + 1).toString() + ':00';
+      }else if(currentDatePlus10Min.minute >= 45 && currentDatePlus10Min.minute <= 59){
+        firstSlot = (currentDatePlus10Min.hour + 1).toString() + ':00';
+        secondSlot = (currentDatePlus10Min.hour + 1).toString() + ':15';
+      }
+    }
+
     return <TimeSlotPickup>[
       TimeSlotPickup(1, 'Seleziona Orario Consegna'),
-      TimeSlotPickup(2, '19:30'),
-      TimeSlotPickup(3, '20:00'),
-      TimeSlotPickup(4, '20:30'),
-      TimeSlotPickup(5, '21:00'),
-      TimeSlotPickup(6, '21:30'),
-      TimeSlotPickup(7, '22:00'),
-      TimeSlotPickup(8, '22:30'),
+      TimeSlotPickup(2, firstSlot),
+      TimeSlotPickup(3, secondSlot),
     ];
   }
 
-  static List<TimeSlotPickup> getPickupSlotsWithLunchTime() {
+  static List<TimeSlotPickup> getReservationSlots() {
     return <TimeSlotPickup>[
-      TimeSlotPickup(1, 'Seleziona Orario Consegna'),
-      TimeSlotPickup(2, '12:30'),
-      TimeSlotPickup(3, '13:00'),
-      TimeSlotPickup(4, '13:30'),
-      TimeSlotPickup(5, '14:00'),
-      TimeSlotPickup(5, '14:30'),
+      TimeSlotPickup(1, 'Seleziona Orario'),
+      TimeSlotPickup(2, '17:00'),
+      TimeSlotPickup(3, '17:30'),
+      TimeSlotPickup(4, '18:00'),
+      TimeSlotPickup(5, '18:30'),
+      TimeSlotPickup(6, '19:00'),
       TimeSlotPickup(7, '19:30'),
       TimeSlotPickup(8, '20:00'),
       TimeSlotPickup(9, '20:30'),
       TimeSlotPickup(10, '21:00'),
       TimeSlotPickup(11, '21:30'),
       TimeSlotPickup(12, '22:00'),
-      TimeSlotPickup(13, '22:00'),
     ];
   }
 }

@@ -218,7 +218,7 @@ class _ManageMenuItemPageState extends State<ManageMenuItemPage> {
                                   productBase.price = _price;
                                   productBase.name = _nameController.value.text;
                                   productBase.listIngredients = _ingredientsController.value.text.split(",");
-                                  productBase.category = _selectedCategory.cat;
+                                  /*productBase.category = _selectedCategory.cat;*/
                                   await crudModel.updateProduct(productBase, productBase.id);
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(SnackBar(backgroundColor: Colors.green.shade500 ,

@@ -7,6 +7,7 @@ import 'package:vigneto/models/cart.dart';
 import 'package:vigneto/models/order_store.dart';
 import 'package:vigneto/models/product.dart';
 import 'package:vigneto/screen/home_vigneto.dart';
+import 'package:vigneto/screen/table_covers_screen.dart';
 import 'package:vigneto/utils/costants.dart';
 import 'package:vigneto/utils/utils.dart';
 
@@ -46,9 +47,9 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.home_outlined, color: Colors.white),
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () => Navigator.pushNamed(context, TableCoversScreen.id),
           ),
-          backgroundColor: Colors.black,
+          backgroundColor: VIGNETO_BROWN,
           title: Center(child: Text('Dashboard')),
           actions: [
             IconButton(icon: Icon(Icons.refresh ,size: 30.0, color: Colors.white,), onPressed: (){

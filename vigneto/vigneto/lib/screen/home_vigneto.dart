@@ -7,6 +7,7 @@ import 'package:vigneto/dash_menu/admin_console_screen_menu.dart';
 import 'package:vigneto/models/cart.dart';
 import 'package:vigneto/models/product.dart';
 import 'package:vigneto/screen/add_modal_screen.dart';
+import 'package:vigneto/screen/table_covers_screen.dart';
 import 'package:vigneto/utils/costants.dart';
 import 'package:vigneto/utils/utils.dart';
 
@@ -34,7 +35,7 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
   List<Cart> cartProductList = <Cart>[];
   final scaffoldState = GlobalKey<ScaffoldState>();
   final _passwordController = TextEditingController();
-  String currentMenuType = VIGNETO_MENU;
+  String currentMenuType = VIGNETO_WINELIST;
   int currentMenuItem = 0;
 
   PageController controller = PageController(
@@ -76,11 +77,11 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
   void updateMenuType(int menuType){
     switch(menuType){
       case 0:
-        currentMenuType = VIGNETO_MENU;
+        currentMenuType = VIGNETO_WINELIST;
         controller.jumpToPage(0);
         break;
       case 1:
-        currentMenuType = VIGNETO_WINELIST;
+        currentMenuType = VIGNETO_MENU;
         controller.jumpToPage(1);
         break;
     }
@@ -202,13 +203,17 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
               ),
               centerTitle: true,
               actions: [
+                IconButton(
+                  icon: Icon(Icons.settings, color: Colors.white,),
+                  onPressed: _showModalSettingsAccess,
+                ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                   child: Stack(
                     children: <Widget>[
                       IconButton(icon: Icon(
                         Icons.shopping_cart_outlined,
-                        color: VIGNETO_BROWN,
+                        color: Colors.white,
                       ),
                           onPressed: (){
                             Navigator.push(context,
@@ -243,9 +248,12 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
                   ),
                 ),
               ],
+
               leading: IconButton(
-                icon: Icon(Icons.settings),
-                onPressed: _showModalSettingsAccess,
+                icon: Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => {
+                  Navigator.pushNamed(context, TableCoversScreen.id),
+                },
               ),
             ),
             body: SafeArea(
@@ -253,7 +261,6 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
                 controller: controller,
                 scrollDirection: Axis.horizontal,
                 children: [
-
                   SingleChildScrollView(
                     controller: scrollViewColtroller,
                     child: Column(
@@ -274,7 +281,7 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: getMenuNameFromCurrentMenu(VIGNETO_MENU),
+                          child: getMenuNameFromCurrentMenu(VIGNETO_WINELIST),
                         ),
                         Container(
                             color: Colors.black,
@@ -290,7 +297,7 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
                                   ),),
                                 ],
                               )],
-                              future: createList(VIGNETO_MENU),
+                              future: createList(VIGNETO_WINELIST),
                               builder: (context, snapshot){
                                 if(snapshot.hasData){
                                   return Padding(
@@ -330,7 +337,7 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: getMenuNameFromCurrentMenu(VIGNETO_WINELIST),
+                          child: getMenuNameFromCurrentMenu(VIGNETO_MENU),
                         ),
                         Container(
                             color: Colors.black,
@@ -346,7 +353,7 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
                                   ),),
                                 ],
                               )],
-                              future: createList(VIGNETO_WINELIST),
+                              future: createList(VIGNETO_MENU),
                               builder: (context, snapshot){
                                 if(snapshot.hasData){
                                   return Padding(
@@ -709,17 +716,17 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
     bool showPhotos = true;
 
     switch(currentMenuType){
-      case VIGNETO_MENU:
+      case VIGNETO_WINELIST:
         showPhotos = false;
-        menuType = 'Pugliesità';
+        menuType = 'Vini';
         image = 'images/xxx.jpg';
         image_2 = 'images/clipart/beef.png';
         image_1 = 'images/clipart/hamb.png';
         nextMenu = 1;
         break;
-      case VIGNETO_WINELIST:
+      case VIGNETO_MENU:
         showPhotos = false;
-        menuType = 'Vini';
+        menuType = 'Pugliesità';
         image = 'images/clipart/asahi.jpeg';
         image_1 = 'images/clipart/singhia.png';
         image_2 = 'images/clipart/chang.jpg';
@@ -734,7 +741,7 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              currentMenuType == VIGNETO_MENU ? Text('') :
+              currentMenuType == VIGNETO_WINELIST? Text('') :
               GestureDetector(
                 child: Icon(Icons.chevron_left),
                 onTap: (){
@@ -749,7 +756,7 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
                   child: Text(menuType, style: TextStyle(fontSize: 18.0, color: VIGNETO_BROWN, fontFamily: 'LoraFont')),
                 ),
               ),
-              currentMenuType == VIGNETO_WINELIST ? Text('') :
+              currentMenuType == VIGNETO_MENU? Text('') :
               GestureDetector(
                 child: Icon(Icons.chevron_right),
                 onTap: (){
@@ -921,8 +928,8 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
               ],
             )
           ],
-        ));
-
+        ),
+    );
   }
 }
 

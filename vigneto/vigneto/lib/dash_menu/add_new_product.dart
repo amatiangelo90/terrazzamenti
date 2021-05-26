@@ -34,7 +34,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
   @override
   void initState() {
     super.initState();
-    productBase = Product('', '', 'images/sushi/default_sushi.jpg', [""], [""], 0.0, 0, ["-"], '', 'true');
+    productBase = Product('', '', 'images/acqua.jpg', [""], [""], 0.0, 0, ["-"], '', 'true');
     _nameController = TextEditingController(text: productBase.name);
     _ingredientsController = TextEditingController(text: Utils.getIngredientsFromProduct(productBase));
     _cantinaController = TextEditingController(text: '');
@@ -230,34 +230,42 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
                           children: [
                             RaisedButton(
                                 child: Text('Rosso',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
-                                color: productBase.category == 'redwine' ? Colors.red : Colors.grey,
+                                color: productBase.category == categoryRedWine ? Colors.red : Colors.grey,
                                 elevation: 5.0,
                                 onPressed: () async {
-                                  updateProductBaseCategoryWine('redwine');
+                                  updateProductBaseCategoryWine(categoryRedWine);
                                 }
                             ),
                             RaisedButton(
                                 child: Text('Rosato',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
-                                color: productBase.category == 'rosewine' ? Colors.pinkAccent : Colors.grey,
+                                color: productBase.category == categoryRoseWine ? Colors.pinkAccent : Colors.grey,
                                 elevation: 5.0,
                                 onPressed: () async {
-                                  updateProductBaseCategoryWine('rosewine');
+                                  updateProductBaseCategoryWine(categoryRoseWine);
                                 }
                             ),
                             RaisedButton(
                                 child: Text('Bianco',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
-                                color: productBase.category == 'whitewine' ? Colors.yellow : Colors.grey,
+                                color: productBase.category == categoryWhiteWine ? Colors.yellow : Colors.grey,
                                 elevation: 5.0,
                                 onPressed: () async {
-                                  updateProductBaseCategoryWine('whitewine');
+                                  updateProductBaseCategoryWine(categoryWhiteWine);
                                 }
                             ),
                             RaisedButton(
                                 child: Text('Bollicine',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
-                                color: productBase.category == 'bollicine' ? Colors.blue : Colors.grey,
+                                color: productBase.category == categoryBollicineWine ? Colors.greenAccent : Colors.grey,
                                 elevation: 5.0,
                                 onPressed: () async {
-                                  updateProductBaseCategoryWine('bollicine');
+                                  updateProductBaseCategoryWine(categoryBollicineWine);
+                                }
+                            ),
+                            RaisedButton(
+                                child: Text('Altro',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
+                                color: productBase.category == categoryDrink ? Colors.lightBlue : Colors.grey,
+                                elevation: 5.0,
+                                onPressed: () async {
+                                  updateProductBaseCategoryWine(categoryDrink);
                                 }
                             ),
                           ],

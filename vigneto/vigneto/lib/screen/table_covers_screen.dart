@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:vigneto/dash_menu/admin_console_screen_menu.dart';
+import 'package:vigneto/reservation/reservation.dart';
+import 'package:vigneto/screen/reserve_order_screen.dart';
 import 'package:vigneto/utils/costants.dart';
 import 'package:vigneto/utils/round_icon_botton.dart';
 
@@ -17,7 +20,7 @@ class TableCoversScreen extends StatefulWidget {
 class _TableCoversScreenState extends State<TableCoversScreen> {
   bool _isTableSelected = false;
   String _tableSelected = '';
-
+  final _passwordController = TextEditingController();
   int _covers = 1;
 
 
@@ -27,8 +30,22 @@ class _TableCoversScreenState extends State<TableCoversScreen> {
       child: Container(
         child: _isTableSelected ? Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: _isTableSelected ? Colors.white : VIGNETO_BROWN),
+              onPressed: () => {
+                setState(() {
+                  _isTableSelected = false;
+                  _tableSelected = '';
+                }),
+              },
+            ),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.settings, color: Colors.white,),
+                onPressed: _showModalSettingsAccess,
+              ),
+            ],
             automaticallyImplyLeading: false,
-
             backgroundColor: VIGNETO_BROWN,
             title:  Text('Seleziona Numero Coperti', style: TextStyle(fontSize: 18.0, color: Colors.white, fontFamily: 'LoraFont'),),
             centerTitle: true,
@@ -107,11 +124,22 @@ class _TableCoversScreenState extends State<TableCoversScreen> {
             ),
           ),
         ) : Scaffold(
+
           appBar: AppBar(
             automaticallyImplyLeading: false,
             backgroundColor: VIGNETO_BROWN,
             title:  Text('Seleziona Tavolo', style: TextStyle(fontSize: 18.0, color: Colors.white, fontFamily: 'LoraFont'),),
             centerTitle: true,
+            actions: [
+              IconButton(
+                icon: Icon(Icons.settings, color: Colors.white,),
+                onPressed: _showModalSettingsAccess,
+              ),
+            ],
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.white,),
+              onPressed: ()=> Navigator.pushNamed(context, ReserveOrderChooseScreen.id),
+            ),
           ),
           backgroundColor: Colors.black,
           body: Padding(
@@ -151,4 +179,70 @@ class _TableCoversScreenState extends State<TableCoversScreen> {
       ),
     );
   }
+
+  _showModalSettingsAccess() {
+    showDialog(
+      context: context,
+      builder: (_) => new AlertDialog(
+        title: new Text("Settings"),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+            child: Center(
+              child: Card(
+                color: Colors.white,
+                child: TextField(
+                  style: TextStyle(color: Colors.black),
+                  keyboardType: TextInputType.number,
+                  cursorColor: Colors.black,
+                  controller: _passwordController,
+                  textAlign: TextAlign.center,
+                  decoration: InputDecoration(
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.black, width: 0.0),
+                    ),
+                    labelStyle: TextStyle(color: Colors.black),
+                    fillColor: Colors.black,
+                    labelText: 'Password',
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              FlatButton(
+                child: Text('Chiudi'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                  child: Text('Accedi'),
+                  onPressed: (){
+
+                    if(_passwordController.value.text == CURRENT_PASSWORD){
+                      setState(() {
+                        _passwordController.clear();
+                      });
+                      Navigator.of(context).pop();
+                      Navigator.pushNamed(context, AdminConsoleMenuScreen.id);
+                    }else{
+                      setState(() {
+                        _passwordController.clear();
+                      });
+
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(backgroundColor: Colors.red.shade500 ,
+                          content: Text('Password errata')));
+                    }
+                  }
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
 }
