@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vigneto/screen/reserve_order_screen.dart';
 import 'package:vigneto/utils/costants.dart';
 
@@ -13,6 +14,7 @@ class _SplashScreenTerrazzamentiState extends State<SplashScreenTerrazzamenti> {
 
   @override
   Widget build(BuildContext context) {
+
 
     return SafeArea(
       child: GestureDetector(
@@ -32,6 +34,10 @@ class _SplashScreenTerrazzamentiState extends State<SplashScreenTerrazzamenti> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(milliseconds: 3000), ()=> Navigator.pushNamed(context, ReserveOrderChooseScreen.id));
+
+    Timer(
+        Duration(milliseconds: 3000),
+            ()=> Navigator.push(context,
+          MaterialPageRoute(builder: (context) => ReserveOrderChooseScreen(uniqueId: Uuid().v1(),),),));
   }
 }

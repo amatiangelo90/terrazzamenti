@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -28,10 +27,6 @@ class _ManageMenuWinePageState extends State<ManageMenuWinePage> {
   double _price;
   Product productBase;
 
-  List<Category> _categoryPicker;
-  List<DropdownMenuItem<Category>> _dropdownCategory;
-  Category _selectedCategory;
-
   TextEditingController _nameController;
   TextEditingController _cantinaController;
   TextEditingController _ingredientsController;
@@ -49,30 +44,10 @@ class _ManageMenuWinePageState extends State<ManageMenuWinePage> {
 
 
     _ingredientsController = TextEditingController(text: Utils.getIngredientsFromProduct(productBase));
-    _categoryPicker = Category.getCategoryList(this.widget.menuType);
-    _dropdownCategory = buildDropdownSlotPickup(_categoryPicker);
     _price = productBase.price;
-    _selectedCategory = _dropdownCategory[0].value;
   }
 
-  onChangeDropTimeSlotPickup(Category currentCategory) {
-    setState(() {
-      _selectedCategory = currentCategory;
-    });
-  }
 
-  List<DropdownMenuItem<Category>> buildDropdownSlotPickup(List category) {
-    List<DropdownMenuItem<Category>> items = [];
-    for (Category category in category) {
-      items.add(
-        DropdownMenuItem(
-          value: category,
-          child: Center(child: Text(category.cat, style: TextStyle(color: Colors.black, fontSize: 16.0,),)),
-        ),
-      );
-    }
-    return items;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,29 +115,6 @@ class _ManageMenuWinePageState extends State<ManageMenuWinePage> {
                           ),
                         ),
                         Text('*Ricorda di dividere i tipi di uva con la virgola (,)', style: TextStyle(fontSize: 10),),
-                        this.widget.menuType == VIGNETO_MENU ? Padding(
-                          padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 3.0),
-                          child: Center(
-                            child: Card(
-                              borderOnForeground: true,
-                              elevation: 1.0,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Center(
-                                    child: DropdownButton(
-                                      isExpanded: true,
-                                      value: _selectedCategory,
-                                      items: _dropdownCategory,
-                                      onChanged: onChangeDropTimeSlotPickup,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ) : SizedBox(height: 0,),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Row(
@@ -227,36 +179,44 @@ class _ManageMenuWinePageState extends State<ManageMenuWinePage> {
                           alignment: MainAxisAlignment.center,
                           children: [
                             RaisedButton(
-                                child: Text('Rosso',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
-                                color: productBase.category == 'redwine' ? Colors.red : Colors.grey,
+                                child: Text('Red',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
+                                color: productBase.category == categoryRedWine ? Colors.red : Colors.grey,
                                 elevation: 5.0,
                                 onPressed: () async {
-                                  updateProductBaseCategoryWine('redwine');
+                                  updateProductBaseCategoryWine(categoryRedWine);
 
                                 }
                             ),
                             RaisedButton(
-                                child: Text('Rosato',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
-                                color: productBase.category == 'rosewine' ? Colors.pinkAccent : Colors.grey,
+                                child: Text('Rosè',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
+                                color: productBase.category == categoryRoseWine ? Colors.pinkAccent : Colors.grey,
                                 elevation: 5.0,
                                 onPressed: () async {
-                                  updateProductBaseCategoryWine('rosewine');
+                                  updateProductBaseCategoryWine(categoryRoseWine);
                                 }
                             ),
                             RaisedButton(
-                                child: Text('Bianco',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
-                                color: productBase.category == 'whitewine' ? Colors.yellow : Colors.grey,
+                                child: Text('Wh',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
+                                color: productBase.category == categoryWhiteWine ? Colors.yellow : Colors.grey,
                                 elevation: 5.0,
                                 onPressed: () async {
-                                  updateProductBaseCategoryWine('whitewine');
+                                  updateProductBaseCategoryWine(categoryWhiteWine);
                                 }
                             ),
                             RaisedButton(
-                                child: Text('Bollicine',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
-                                color: productBase.category == 'bollicine' ? Colors.blue : Colors.grey,
+                                child: Text('Bol',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
+                                color: productBase.category == categoryBollicineWine ? Colors.blue : Colors.grey,
                                 elevation: 5.0,
                                 onPressed: () async {
-                                  updateProductBaseCategoryWine('bollicine');
+                                  updateProductBaseCategoryWine(categoryBollicineWine);
+                                }
+                            ),
+                            RaisedButton(
+                                child: Text('Oth',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
+                                color: productBase.category == categoryDrink ? Colors.blue : Colors.grey,
+                                elevation: 5.0,
+                                onPressed: () async {
+                                  updateProductBaseCategoryWine(categoryDrink);
                                 }
                             ),
                           ],
@@ -353,43 +313,12 @@ class _ManageMenuWinePageState extends State<ManageMenuWinePage> {
   }
 
   void updateProductBaseCategoryWine(String categoryWine) {
+    print('@@@@@@@@');
     print(categoryWine);
     print('productBase.category ->' + productBase.category);
     print('@@@@@@@@');
     setState(() {
       productBase.category = categoryWine;
     });
-  }
-
-
-}
-
-class Category {
-  int id;
-  String cat;
-
-  Category(this.id, this.cat);
-
-  static List<Category> getCategoryList(String menuType) {
-    print(menuType);
-    switch(menuType){
-      case VIGNETO_WINELIST:
-        return <Category>[
-          Category(1, 'Scegli Categoria'),
-          Category(2, categoryWhiteWine),
-          Category(3, categoryRedWine),
-          Category(4, categoryBollicineWine),
-          Category(5, categoryRoseWine),
-        ];
-        break;
-      default:
-        return <Category>[
-          Category(1, 'Scegli Categoria'),
-          Category(2, categoryWhiteWine),
-        ];
-    }
-
-
-
   }
 }

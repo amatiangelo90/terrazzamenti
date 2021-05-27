@@ -13,6 +13,10 @@ class TableReservationScreen extends StatefulWidget {
 
   static String id = 'reservation';
 
+  final String uniqueId;
+
+  TableReservationScreen({@required this.uniqueId});
+
   @override
   _TableReservationScreenState createState() => _TableReservationScreenState();
 }
@@ -29,10 +33,12 @@ class _TableReservationScreenState extends State<TableReservationScreen> {
   TimeSlotPickup _selectedTimeSlotPikup;
 
   final _nameController = TextEditingController();
+  final _customerNumber = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
+    _customerNumber.dispose();
     super.dispose();
   }
 
@@ -88,6 +94,22 @@ class _TableReservationScreenState extends State<TableReservationScreen> {
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Nome',
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 0.0),
+                child: Center(
+                  child: Card(
+                    child: TextField(
+                      keyboardType: TextInputType.number,
+                      controller: _customerNumber,
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Cellulare',
                       ),
                     ),
                   ),
@@ -198,6 +220,22 @@ class _TableReservationScreenState extends State<TableReservationScreen> {
                         );
                       },
                     );
+                  }else if(_customerNumber.value.text == ''){
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                          content: Text('Inserire numero cellulare', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                          actions: <Widget>[
+                            FlatButton(
+                              onPressed: () => Navigator.of(context).pop(false),
+                              child: const Text("Indietro"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   }else if(_selectedDateTime == null){
                     showDialog(
                       context: context,
@@ -231,23 +269,26 @@ class _TableReservationScreenState extends State<TableReservationScreen> {
                       },
                     );
                   } else {
-                    HttpService.sendMessage(numberTerrazzamenti,
+                    HttpService.sendReservationMessage(
+                        numberTerrazzamenti,
                         buildMessageReservation(
                             _nameController.value.text,
                             getCurrentDateTime(),
                             _selectedTimeSlotPikup.slot,
                             _selectedDateTime,
                             _covers.toString()),
-                        _nameController.value.text,
-                        '0',
+
                         getCurrentDateTime(),
-                        null,
                         '',
                         '',
+                        _nameController.value.text,
+                        getCurrentDateTime(),
                         Utils.getWeekDay(_selectedDateTime.weekday) +" ${_selectedDateTime.day} " + Utils.getMonthDay(_selectedDateTime.month),
+                        _customerNumber.value.text,
                         _selectedTimeSlotPikup.slot,
-                        EMPTY_STRING,
-                        EMPTY_STRING
+                        _covers.toString(),
+                        false,
+                        this.widget.uniqueId
                     );
                   }
                 }catch(e){

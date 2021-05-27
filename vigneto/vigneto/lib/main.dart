@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:vigneto/reservation/reservation.dart';
+import 'package:vigneto/reservation/reservation_screen.dart';
 import 'package:vigneto/screen/home_vigneto.dart';
 import 'package:vigneto/screen/reserve_order_screen.dart';
 import 'package:vigneto/screen/splash_screen_vigneto.dart';

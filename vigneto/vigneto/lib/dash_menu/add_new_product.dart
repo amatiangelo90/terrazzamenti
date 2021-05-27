@@ -34,7 +34,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
   @override
   void initState() {
     super.initState();
-    productBase = Product('', '', 'images/acqua.jpg', [""], [""], 0.0, 0, ["-"], '', 'true');
+    productBase = Product('', '', 'images/logo_terr.png', [""], [""], 0.0, 0, ["-"], '', 'true');
     _nameController = TextEditingController(text: productBase.name);
     _ingredientsController = TextEditingController(text: Utils.getIngredientsFromProduct(productBase));
     _cantinaController = TextEditingController(text: '');
@@ -131,7 +131,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
                                   border: OutlineInputBorder(),
                                   labelText: _selectedCategory.menuType == VIGNETO_WINELIST ? 'Uvaggio' :'Ingredienti',
                                 ),
-                                maxLines: 4,
+                                maxLines: 2,
                               ),
                             ),
                           ),
@@ -229,7 +229,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
                           alignment: MainAxisAlignment.center,
                           children: [
                             RaisedButton(
-                                child: Text('Rosso',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
+                                child: Text('Red',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
                                 color: productBase.category == categoryRedWine ? Colors.red : Colors.grey,
                                 elevation: 5.0,
                                 onPressed: () async {
@@ -237,7 +237,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
                                 }
                             ),
                             RaisedButton(
-                                child: Text('Rosato',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
+                                child: Text('Rosè',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
                                 color: productBase.category == categoryRoseWine ? Colors.pinkAccent : Colors.grey,
                                 elevation: 5.0,
                                 onPressed: () async {
@@ -245,7 +245,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
                                 }
                             ),
                             RaisedButton(
-                                child: Text('Bianco',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
+                                child: Text('Wh',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
                                 color: productBase.category == categoryWhiteWine ? Colors.yellow : Colors.grey,
                                 elevation: 5.0,
                                 onPressed: () async {
@@ -253,7 +253,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
                                 }
                             ),
                             RaisedButton(
-                                child: Text('Bollicine',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
+                                child: Text('Bol',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
                                 color: productBase.category == categoryBollicineWine ? Colors.greenAccent : Colors.grey,
                                 elevation: 5.0,
                                 onPressed: () async {
@@ -261,7 +261,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
                                 }
                             ),
                             RaisedButton(
-                                child: Text('Altro',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
+                                child: Text('Oth',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
                                 color: productBase.category == categoryDrink ? Colors.lightBlue : Colors.grey,
                                 elevation: 5.0,
                                 onPressed: () async {
@@ -325,7 +325,7 @@ class _AddNewProductScreenState extends State<AddNewProductScreen> {
                                     }else{
                                       print('Creazione Prodotto');
                                       CRUDModel crudModel = CRUDModel(_selectedCategory.menuType);
-                                      productBase.name = _nameController.value.text;
+                                      productBase.name = (_nameController.value.text).replaceAll('"', '\'');
                                       productBase.price = _price;
                                       productBase.listIngredients = _ingredientsController.value.text.split(",");
                                       productBase.changes[0] = _cantinaController.value.text;

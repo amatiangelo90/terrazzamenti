@@ -5,6 +5,7 @@ import 'package:vigneto/models/cart.dart';
 import 'package:vigneto/models/exception_event.dart';
 import 'package:vigneto/models/order_store.dart';
 import 'package:vigneto/models/product.dart';
+import 'package:vigneto/models/reservation_model.dart';
 import 'dao.dart';
 
 class CRUDModel{
@@ -14,6 +15,7 @@ class CRUDModel{
   Dao _dao;
   List<Product> products;
   List<OrderStore> customerOrders;
+  List<ReservationModel> reservationsList;
 
   CRUDModel(this.collection){
     _dao = Dao(this.collection);
@@ -55,6 +57,21 @@ class CRUDModel{
       print(customerOrders);
 
       return customerOrders.toList();
+    }catch(e){
+      throw Exception(e);
+    }
+  }
+
+  Future<List<ReservationModel>> fetchReservation() async {
+
+    try{
+      var result = await _dao.getReservationStoreCollection();
+      reservationsList = result.docs
+          .map((doc) => ReservationModel.fromMap(
+          doc.data(),
+          doc.id)).toList();
+
+      return reservationsList.toList();
     }catch(e){
       throw Exception(e);
     }
@@ -159,5 +176,31 @@ class CRUDModel{
       throw Exception(e);
     }
 
+  }
+
+  Future addReservation(String uniqueId,
+      String docId,
+      String id,
+      String name,
+      String date,
+      String reservationDate,
+      String customerNumber,
+      String hour,
+      String covers,
+      bool confirmed) async {
+
+    ReservationModel reservationModel = ReservationModel(
+        '',
+        uniqueId,
+        name,
+        customerNumber,
+        date,
+        reservationDate,
+        hour,
+        covers,
+        confirmed
+    );
+    await _dao.addDocument(reservationModel.toJson());
+    return ;
   }
 }

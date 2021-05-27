@@ -18,9 +18,10 @@ class TerrazzamentiHomeScreen extends StatefulWidget {
 
   final String covers;
   final String tableNumber;
+  final String uniqueId;
 
 
-  TerrazzamentiHomeScreen({@required this.covers, @required this.tableNumber});
+  TerrazzamentiHomeScreen({@required this.covers, @required this.tableNumber, @required this.uniqueId});
 
   @override
   _TerrazzamentiHomeScreenState createState() => _TerrazzamentiHomeScreenState();
@@ -31,7 +32,6 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
   List<Product> fromOsteriaProductList = <Product>[];
   List<Product> wineProductList = <Product>[];
 
-  var uuid;
   List<Cart> cartProductList = <Cart>[];
   final scaffoldState = GlobalKey<ScaffoldState>();
   final _passwordController = TextEditingController();
@@ -53,7 +53,6 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
             && _twoListContainsSameElements(element.changes, cartItemToAdd[0].changes)){
           element.numberOfItem = element.numberOfItem + cartItemToAdd[0].numberOfItem;
           _present = true;
-
         }
       });
 
@@ -91,7 +90,6 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
 
   @override
   void initState() {
-    uuid = Uuid().v1();
     scrollViewColtroller = ScrollController();
     scrollViewColtroller.addListener(_scrollListener);
     super.initState();
@@ -220,7 +218,7 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
                               MaterialPageRoute(builder: (context) => CartScreen(
                                 cartItems: cartProductList,
                                 function: removeProductFromCart,
-                                uniqueId: uuid,
+                                uniqueId: this.widget.uniqueId,
                                 tableNumber: this.widget.tableNumber,
                                 covers: this.widget.covers,
                               ),
@@ -420,8 +418,8 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
                 ),
                 child: ClipRect(
                   child: Banner(
-                    message: getNameByType(product.category),
-                    color: getColorByType(product.category),
+                    message: Utils.getNameByType(product.category),
+                    color: Utils.getColorByType(product.category),
                     location: BannerLocation.topEnd,
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
@@ -809,38 +807,6 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
         ) : Text(''),
       ],
     );
-  }
-
-  getNameByType(String type) {
-    switch(type){
-      case 'whitewine':
-        return 'Bianco';
-      case 'redwine':
-        return 'Rosso';
-      case 'bollicine':
-        return 'Bollicine';
-      case 'champagne':
-        return 'Champagne';
-      case 'rosewine':
-        return 'Rosato';
-    }
-    return '';
-  }
-
-  getColorByType(String type) {
-    switch(type){
-      case 'whitewine':
-        return Colors.yellow.shade600;
-      case 'bollicine':
-        return Colors.blue.shade400;
-      case 'redwine':
-        return Colors.red.shade900;
-      case 'champagne':
-        return VIGNETO_BROWN;
-      case 'rosewine':
-        return Colors.pinkAccent.shade100;
-    }
-    return Colors.black;
   }
 
   Future<List<Product>> getCurrentProductList(String currentMenuType) async {

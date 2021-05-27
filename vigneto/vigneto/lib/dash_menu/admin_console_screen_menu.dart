@@ -6,6 +6,7 @@ import 'package:vigneto/dao/crud_model.dart';
 import 'package:vigneto/models/cart.dart';
 import 'package:vigneto/models/order_store.dart';
 import 'package:vigneto/models/product.dart';
+import 'package:vigneto/models/reservation_model.dart';
 import 'package:vigneto/screen/home_vigneto.dart';
 import 'package:vigneto/screen/table_covers_screen.dart';
 import 'package:vigneto/utils/costants.dart';
@@ -13,6 +14,7 @@ import 'package:vigneto/utils/utils.dart';
 
 import 'add_new_product.dart';
 import 'manage_menu_item_page.dart';
+import 'manage_wine_item.dart';
 
 class AdminConsoleMenuScreen extends StatefulWidget {
   static String id = 'admin_console';
@@ -25,6 +27,9 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
   List<Product> pugliesitaProductList = <Product>[];
   List<Product> wineProductList = <Product>[];
   DateTime _selectedDateTime = new DateTime.now();
+
+  double width;
+  double height;
 
   final _datePikerController = DatePickerController();
 
@@ -42,6 +47,10 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -58,7 +67,7 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
             ),
           ],
         ),
-        floatingActionButton: _selectedIndex < 4 ? FloatingActionButton(
+        floatingActionButton: _selectedIndex < 2 ? FloatingActionButton(
           onPressed: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => AddNewProductScreen())
@@ -80,13 +89,17 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.book_online),
-              label: 'Orders',
+              label: 'Ordini',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.library_books),
+              label: 'Prenotazioni',
             ),
           ],
           currentIndex: _selectedIndex,
           showUnselectedLabels: true,
           unselectedItemColor: Colors.grey,
-          selectedItemColor: Colors.teal[800],
+          selectedItemColor: VIGNETO_BROWN,
           onTap: _onItemTapped,
         ),
       ),
@@ -101,203 +114,142 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
     });
     List<Widget> items = <Widget>[];
 
-    productList.forEach((product) {
-      items.add(
-        product.available == 'false' ?
-        InkWell(
-          hoverColor: Colors.blueGrey,
-          splashColor: Colors.greenAccent,
-          highlightColor: Colors.blueGrey.withOpacity(0.5),
-          onTap: () => Navigator.push(context,
-            MaterialPageRoute(builder: (context) => ManageMenuItemPage(product: product, menuType: currentMenuType,),
-            ),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(6.0),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      spreadRadius: 2.0,
-                      blurRadius: 5.0,
-                    ),
-                  ]
-              ),
-              child: ClipRect(
-                child: Banner(
-                  message: 'Esaurito',
-                  location: BannerLocation.topEnd,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                      ClipRRect(
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), bottomLeft: Radius.circular(10.0)),
-                        child: Image.asset(product.image, width: 90.0, height: 90.0, fit: BoxFit.cover,),
-                      ),
-                      SizedBox(
-                        width: 250.0,
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 5.0, bottom: 5.0),
-                                child: Text(product.name, style: TextStyle(fontSize: 16.0),),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 5.0),
-                                child: Text(Utils.getIngredientsFromProduct(product), overflow: TextOverflow.ellipsis , style: TextStyle(fontSize: 11.0),),
-                              ),
-                              Text('',),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 5.0),
-                                child: Text('€ ' + product.price.toString(), overflow: TextOverflow.ellipsis , style: TextStyle(fontSize: 14.0),),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ) : product.available == 'new' ?
-        InkWell(
-          hoverColor: Colors.blueGrey,
-          splashColor: Colors.greenAccent,
-          highlightColor: Colors.blueGrey.withOpacity(0.5),
-          onTap: () => Navigator.push(context,
-            MaterialPageRoute(builder: (context) => ManageMenuItemPage(product: product, menuType: currentMenuType,),
-            ),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(6.0),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      spreadRadius: 2.0,
-                      blurRadius: 5.0,
-                    ),
-                  ]
-              ),
-              child: ClipRect(
-                child: Banner(
-                  message: 'Novità',
-                  color: Colors.green,
-                  location: BannerLocation.topEnd,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                      ClipRRect(
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), bottomLeft: Radius.circular(10.0)),
-                        child: Image.asset(product.image, width: 90.0, height: 90.0, fit: BoxFit.cover,),
-                      ),
-                      SizedBox(
-                        width: 250.0,
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 5.0, bottom: 5.0),
-                                child: Text(product.name, style: TextStyle(fontSize: 16.0),),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 5.0),
-                                child: Text(Utils.getIngredientsFromProduct(product), overflow: TextOverflow.ellipsis , style: TextStyle(fontSize: 11.0),),
-                              ),
-                              Text('',),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 5.0),
-                                child: Text('€ ' + product.price.toString(), overflow: TextOverflow.ellipsis , style: TextStyle(fontSize: 14.0),),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        )
-            : InkWell(
-          hoverColor: Colors.blueGrey,
-          splashColor: Colors.greenAccent,
-          highlightColor: Colors.blueGrey.withOpacity(0.5),
-          onTap: () {
-            Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ManageMenuItemPage(product: product, menuType: currentMenuType,),
-              ),
-            );
-          },
 
-          child: Padding(
-            padding: EdgeInsets.all(6.0),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      spreadRadius: 2.0,
-                      blurRadius: 5.0,
+    productList.forEach((product) {
+      if(listTypeWine.contains(product.category)){
+        items.add(
+          InkWell(
+            onTap: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ManageMenuWinePage(product: product, menuType: currentMenuType,),),),
+            child: Padding(
+              padding: EdgeInsets.all(6.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: product.available == 'false' ? Colors.redAccent : Colors.black),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: ClipRect(
+                  child: Banner(
+                    message: Utils.getNameByType(product.category),
+                    color: Utils.getColorByType(product.category),
+                    location: BannerLocation.topEnd,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        SizedBox(
+                          width: width - 200,
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                product.available == 'false' ? Padding(
+                                  padding: const EdgeInsets.fromLTRB(100,0,10,0),
+                                  child: Text('Esaurito', style: TextStyle(fontSize: 19, color: Colors.red),),
+                                ) : SizedBox(width: 0,),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 5.0, bottom: 5.0),
+                                  child: Text(product.name, style: TextStyle(color: VIGNETO_BROWN, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                                ),
+                                Utils.getIngredientsFromProduct(product) == '' ? SizedBox(height: 0,) : Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(Utils.getIngredientsFromProduct(product), overflow: TextOverflow.fade , style: TextStyle(fontSize: 13.0, fontFamily: 'LoraFont'),),
+                                ),
+                                product.changes != null ? Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: Text('Cantina: ' + product.changes[0], overflow: TextOverflow.fade , style: TextStyle(fontSize: 13.0, color: Colors.black, fontFamily: 'LoraFont'),),
+                                ) : SizedBox(width: 0,),
+
+                                Text('',),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 5.0),
+                                  child: Text('€ ' + product.price.toString(), overflow: TextOverflow.ellipsis , style: TextStyle(color: VIGNETO_BROWN, fontSize: 14.0, fontFamily: 'LoraFont'),),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ]
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  ClipRRect(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), bottomLeft: Radius.circular(10.0)),
-                    child: Image.asset(product.image, width: 90.0, height: 90.0, fit: BoxFit.fitHeight,),
                   ),
-                  SizedBox(
-                    width: 250.0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5.0, bottom: 5.0),
-                            child: Text(product.name, style: TextStyle(fontSize: 16.0),),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5.0),
-                            child: Text(Utils.getIngredientsFromProduct(product), overflow: TextOverflow.ellipsis , style: TextStyle(fontSize: 11.0),),
-                          ),
-                          Text('',),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5.0),
-                            child: Text('€ ' + product.price.toString(), overflow: TextOverflow.ellipsis , style: TextStyle(fontSize: 14.0),),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
+          ),
+        );
+      } else{
+        items.add(
+            product.available == 'true' ? Padding(
+              padding: EdgeInsets.all(6.0),
+              child: Container(
+                child: getRowFromProduct(product, currentMenuType),
+              ),
+            ) : Padding(
+              padding: EdgeInsets.all(6.0),
+              child: Container(
+                child: ClipRect(
+                  child: Banner(
+                    message: product.available == 'new' ? 'Novità' : 'Esaurito',
+                    color: product.available == 'new' ? Colors.green.shade500 : Colors.red.shade900,
+                    location: BannerLocation.topEnd,
+                    child: getRowFromProduct(product, currentMenuType),
+                  ),
+                ),
+              ),
+            )
+        );
+      }
+    });
+    return items;
+  }
+
+  getRowFromProduct(Product product, String currentMenuType) {
+    return InkWell(
+      onTap: () => Navigator.push(context,
+        MaterialPageRoute(builder: (context) => ManageMenuItemPage(product: product, menuType: currentMenuType,),
+        ),
+      ),
+      child: ClipRect(
+        child: Banner(
+          color: product.available.toLowerCase() == 'true' ? Colors.green : product.available.toLowerCase() == 'new' ? Colors.yellow.shade500 : Colors.redAccent,
+          message: product.available.toLowerCase() == 'true' ? 'Disponibile' : product.available.toLowerCase() == 'new' ? 'Novità' : 'Esaurito',
+          location: BannerLocation.topEnd,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              ClipRRect(
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), bottomLeft: Radius.circular(10.0)),
+                child: Image.asset(product.image, width: 90.0, height: 90.0, fit: BoxFit.cover,),
+              ),
+              SizedBox(
+                width: 250.0,
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5.0, bottom: 5.0),
+                        child: Text(product.name, style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5.0),
+                        child: Text(Utils.getIngredientsFromProduct(product), overflow: TextOverflow.ellipsis , style: TextStyle(color: Colors.black, fontSize: 11.0, fontFamily: 'LoraFont'),),
+                      ),
+                      Text('',),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5.0),
+                        child: Text('€ ' + product.price.toString(), overflow: TextOverflow.ellipsis , style: TextStyle(color: Colors.black, fontSize: 14.0, fontFamily: 'LoraFont'),),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      );
-    }
+      ),
     );
-    return items;
   }
 
   Future<List<Product>> getCurrentProductList(String currentMenuType) async {
@@ -624,7 +576,6 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
       _selectedDateTime = date;
     });
   }
-
   Widget buildTableRecap(List<OrderStore> ordersList,
       String selectedDatePickupDelivery){
 
@@ -735,6 +686,19 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
     return recapMap;
   }
 
+  Map buildMapForRecapTableReservation(List<ReservationModel> reservationList, String selectedDatePickupDelivery) {
+
+
+    Map<String, int> recapMap = {};
+
+    reservationList.forEach((reservation) {
+      if(reservation.date == selectedDatePickupDelivery){
+
+      }
+    });
+    return recapMap;
+  }
+
 
   buildTableFromMapForRecapTable(Map<String, int> mapForRecapTable) {
     List<TableRow> rowTable = <TableRow>[];
@@ -786,11 +750,13 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
       case 1:
         return getWorkingWidgetByItem(_selectedIndex);
       case 2:
-        return buildOrdersManagePage();
+        return buildOrdersManagerPage();
+      case 3:
+        return buildReservationManagerPage();
     }
   }
 
-  buildOrdersManagePage() {
+  buildOrdersManagerPage() {
     return SingleChildScrollView(
       controller: scrollViewController,
       child: Column(
@@ -806,7 +772,7 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
                 dateTextStyle: TextStyle(color: Colors.green, fontSize: 16.0),
                 dayTextStyle: TextStyle(color: Colors.green, fontSize: 14.0),
                 monthTextStyle: TextStyle(color: Colors.green, fontSize: 12.0),
-                selectionColor: Colors.pinkAccent,
+                selectionColor: VIGNETO_BROWN,
                 deactivatedColor: Colors.grey,
                 selectedTextColor: Colors.white,
                 daysCount: 30,
@@ -851,4 +817,216 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
     );
   }
 
+  buildReservationManagerPage() {
+    return SingleChildScrollView(
+      controller: scrollViewController,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              DatePicker(
+                DateTime.now().subtract(Duration(days: 3, hours: 0, minutes: 0, seconds: 0)),
+                initialSelectedDate: DateTime.now(),
+                inactiveDates: Utils.getUnavailableData(),
+                dateTextStyle: TextStyle(color: VIGNETO_BROWN, fontSize: 16.0),
+                dayTextStyle: TextStyle(color: VIGNETO_BROWN, fontSize: 14.0),
+                monthTextStyle: TextStyle(color: VIGNETO_BROWN, fontSize: 12.0),
+                selectionColor: VIGNETO_BROWN,
+                deactivatedColor: Colors.grey,
+                selectedTextColor: Colors.white,
+                daysCount: 30,
+                locale: 'it',
+                controller: _datePikerController,
+                onDateChange: (date) {
+                  setSelectedDate(date);
+                },
+              ),
+            ],
+          ),
+          Container(
+              child: FutureBuilder(
+                initialData: <Widget>[Column(
+                  children: [
+                    Center(child: CircularProgressIndicator()),
+                    SizedBox(),
+                    Center(child: Text('Caricamento ordini..',
+                      style: TextStyle(fontSize: 16.0, color: Colors.black),
+                    ),),
+                  ],
+                )],
+                future: createReservationListByDateTime(DateTime.utc(_selectedDateTime.year ,_selectedDateTime.month, _selectedDateTime.day ,0 ,0 ,0 ,0 ,0)),
+                builder: (context, snapshot){
+                  if(snapshot.hasData){
+                    return Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: ListView(
+                        primary: false,
+                        shrinkWrap: true,
+                        children: snapshot.data,
+                      ),
+                    );
+                  }else{
+                    return CircularProgressIndicator();
+                  }
+                },
+              )
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<List<Widget>> createReservationListByDateTime(DateTime date) async{
+
+    List<Widget> items = <Widget>[];
+
+    print(date);
+
+    String selectedReservationDate = Utils.getWeekDay(date.weekday) +" ${date.day} " + Utils.getMonthDay(date.month);
+    CRUDModel crudModel = CRUDModel(RESERVATION_TRACKER);
+
+    List<ReservationModel> reservationList = await crudModel.fetchReservation();
+    reservationList.forEach((orderItem) {
+      orderItem.date == selectedReservationDate ?
+      items.add(
+          ClipRRect(
+            child: Banner(
+              message: orderItem.confirmed ? 'Confermato' : 'Non Confermato',
+              color: orderItem.confirmed ? Colors.greenAccent : Colors.red,
+              location: BannerLocation.topEnd,
+              child: Padding(
+                padding: EdgeInsets.all(6.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          spreadRadius: 2.0,
+                          blurRadius: 5.0,
+                        ),
+                      ]
+                  ),
+                  child: ExpansionCard(
+                      borderRadius: 20,
+                      title: Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      orderItem.name,
+                                      style: TextStyle(fontSize: 20, color: Colors.black),
+                                    ),
+                                    Text(
+                                      orderItem.hour,
+                                      style: TextStyle(fontSize: 15, color: Colors.black),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 10,),
+                              ],
+                            ),
+                            SizedBox(height: 5.0,),
+                            Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'cell. ' + orderItem.customerNumber,
+                                      style: TextStyle(fontSize: 15, color: Colors.black),
+                                    ),
+                                    Text(
+                                      'Coperti : ' + orderItem.covers,
+                                      style: TextStyle(fontSize: 15, color: Colors.black),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 10,),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Table(
+                            border: TableBorder(
+                                horizontalInside: BorderSide(
+                                    width: 1,
+                                    color: orderItem.confirmed ? Colors.orangeAccent : Colors.blue.shade800, style: BorderStyle.solid)),
+                            children: <TableRow>[],
+                          ),
+                        ),
+                        SizedBox(height: 30,),
+
+                        Column(
+                          children: [
+                            Text(orderItem.date),
+                          ],
+                        ),
+                        SizedBox(height: 30,),
+
+                        IconButton(
+                          icon: Icon(
+                            FontAwesomeIcons.trash,
+                            color: Colors.redAccent,
+                          ),
+                          onPressed: () async {
+                            return await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text("Conferma"),
+                                  content: Text("Eliminare l'ordine di " + orderItem.name +"?"),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                        onPressed: () async {
+                                          await crudModel.removeProduct(orderItem.docId);
+                                          setState(() {});
+                                          Navigator.of(context).pop(true);
+                                        },
+                                        child: const Text("Cancella")
+                                    ),
+                                    FlatButton(
+                                      onPressed: () => Navigator.of(context).pop(false),
+                                      child: const Text("Indietro"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ]
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ) : SizedBox(height: 0,);
+    });
+
+
+    if(items.length == 0){
+      items.add(
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(child: Text("Nessuna prenotazione per la data corrente",style: TextStyle(color: Colors.black, fontSize: 16.0,))),
+            ],
+          )
+      );
+    }
+    return items;
+  }
 }

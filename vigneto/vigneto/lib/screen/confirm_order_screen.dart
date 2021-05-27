@@ -277,7 +277,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                               },
                             );
                           } else{
-                            HttpService.sendMessage(numberTerrazzamenti,
+                            HttpService.sendDeliveryMessage(numberTerrazzamenti,
                                 buildMessageFromCartPickUp(
                                     this.widget.cartItems,
                                     _nameController.value.text,

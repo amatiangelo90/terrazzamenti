@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:vigneto/dash_menu/admin_console_screen_menu.dart';
-import 'package:vigneto/reservation/reservation.dart';
+import 'package:vigneto/reservation/reservation_screen.dart';
 import 'package:vigneto/screen/reserve_order_screen.dart';
 import 'package:vigneto/utils/costants.dart';
 import 'package:vigneto/utils/round_icon_botton.dart';
@@ -12,6 +12,10 @@ import 'home_vigneto.dart';
 class TableCoversScreen extends StatefulWidget {
 
   static String id = 'tablecovers';
+
+  final String uniqueId;
+
+  TableCoversScreen({@required this.uniqueId});
 
   @override
   _TableCoversScreenState createState() => _TableCoversScreenState();
@@ -115,6 +119,7 @@ class _TableCoversScreenState extends State<TableCoversScreen> {
                       MaterialPageRoute(builder: (context) => TerrazzamentiHomeScreen(
                         covers: _covers.toString(),
                         tableNumber: _tableSelected,
+                        uniqueId: this.widget.uniqueId,
                       ),
                       ),
                     );

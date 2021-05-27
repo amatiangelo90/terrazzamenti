@@ -7,10 +7,11 @@ var numberTerrazzamenti = '390809683953';
 
 Color VIGNETO_BROWN = Color(0xff402021);
 
-var listTypeWine = ['whitewine','redwine','rosewine','bollicine'];
+var listTypeWine = [categoryWhiteWine,categoryRedWine,categoryRoseWine,categoryBollicineWine,categoryDrink];
 
 
 const ORDERS_TRACKER = 'orders-tracker';
+const RESERVATION_TRACKER = 'reservation-tracker';
 const ERRORS_REPORT = 'errors-tracker';
 const EMPTY_STRING = '';
 const CURRENT_PASSWORD = '1903';
@@ -25,4 +26,4 @@ const categoryWhiteWine = 'whitewine';
 const categoryRedWine = 'redwine';
 const categoryRoseWine = 'rosewine';
 const categoryBollicineWine = 'bollicine';
-const categoryDrink = 'drink';
+const categoryDrink = 'acqua';

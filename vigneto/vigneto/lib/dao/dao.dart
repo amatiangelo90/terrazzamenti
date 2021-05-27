@@ -18,6 +18,9 @@ class Dao{
   Future<QuerySnapshot> getOrdersStoreCollection() {
     return _collectionReference.get();
   }
+  Future<QuerySnapshot> getReservationStoreCollection() {
+    return _collectionReference.get();
+  }
 
   Stream<QuerySnapshot> streamDataCollection(){
     return _collectionReference.get().asStream();

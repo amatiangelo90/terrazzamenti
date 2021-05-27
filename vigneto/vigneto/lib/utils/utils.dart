@@ -226,27 +226,27 @@ class Utils{
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Expanded(
-                child: ReusableCard(
-                  color: VIGNETO_BROWN,
-                  cardChild: IconContent(label: 'THAI', icon: Icons.food_bank, color: Colors.white),
-                  onPress: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Attenzione', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
-                          content: Text('Per il servizio delivery il minimo d\'ordine è di € 40', style: TextStyle(color: VIGNETO_BROWN, fontSize: 16.0, fontFamily: 'LoraFont'),),
-                          actions: <Widget>[
-                            FlatButton(
-                              onPressed: () => Navigator.of(context).pop(false),
-                              child: const Text("Indietro"),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                ),
+              child: ReusableCard(
+                color: VIGNETO_BROWN,
+                cardChild: IconContent(label: 'THAI', icon: Icons.food_bank, color: Colors.white),
+                onPress: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Attenzione', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                        content: Text('Per il servizio delivery il minimo d\'ordine è di € 40', style: TextStyle(color: VIGNETO_BROWN, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                        actions: <Widget>[
+                          FlatButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: const Text("Indietro"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
             ),Expanded(
               child: ReusableCard(
                 color: VIGNETO_BROWN,
@@ -329,5 +329,37 @@ class Utils{
   static List<DateTime> getUnavailableData(){
     return [
     ];
+  }
+
+  static String getNameByType(String type) {
+    switch(type){
+      case categoryWhiteWine:
+        return 'Bianco';
+      case categoryRedWine:
+        return 'Rosso';
+      case categoryDrink:
+        return 'Drink';
+      case categoryBollicineWine:
+        return 'Bollicine';
+      case categoryRoseWine:
+        return 'Rosato';
+    }
+    return '';
+  }
+
+  static Color getColorByType(String type) {
+    switch(type){
+      case categoryWhiteWine:
+        return Colors.yellow.shade600;
+      case categoryBollicineWine:
+        return Colors.tealAccent.shade400;
+      case categoryDrink:
+        return Colors.lightBlueAccent.shade100;
+      case categoryRedWine:
+        return Colors.red.shade900;
+      case categoryRoseWine:
+        return Colors.pinkAccent.shade100;
+    }
+    return Colors.black;
   }
 }
