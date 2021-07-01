@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vigneto/components/icon_content.dart';
 import 'package:vigneto/components/reusable_card.dart';
+import 'package:vigneto/dash_menu/admin_console_scree_reservation.dart';
 import 'package:vigneto/dash_menu/admin_console_screen_menu.dart';
 import 'package:vigneto/reservation/reservation_screen.dart';
 import 'package:vigneto/screen/table_covers_screen.dart';
@@ -10,10 +11,6 @@ import 'package:vigneto/utils/costants.dart';
 class ReserveOrderChooseScreen extends StatefulWidget {
 
   static String id = 'choosingscreen';
-
-  final String uniqueId;
-
-  ReserveOrderChooseScreen({@required this.uniqueId});
 
   @override
   _ReserveOrderChooseScreenState createState() => _ReserveOrderChooseScreenState();
@@ -43,12 +40,7 @@ class _ReserveOrderChooseScreenState extends State<ReserveOrderChooseScreen> {
                   color: Colors.white,
                   cardChild: IconContent(label: 'Menù', icon: Icons.restaurant_menu,color: VIGNETO_BROWN, description: '',),
                   onPress: () {
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TableCoversScreen(
-                        uniqueId: this.widget.uniqueId,
-                      ),
-                      ),
-                    );
+                    Navigator.pushNamed(context, TableCoversScreen.id);
                   },
                 ),
               ),
@@ -57,12 +49,7 @@ class _ReserveOrderChooseScreenState extends State<ReserveOrderChooseScreen> {
                   color: Colors.white,
                   cardChild: IconContent(label: 'Prenota un tavolo', icon: Icons.calendar_today,color: VIGNETO_BROWN, description: '',),
                   onPress: () {
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TableReservationScreen(
-                        uniqueId: this.widget.uniqueId,
-                      ),
-                      ),
-                    );
+                    Navigator.pushNamed(context, TableReservationScreen.id);
                   },
                 ),
               ),
@@ -86,7 +73,7 @@ class _ReserveOrderChooseScreenState extends State<ReserveOrderChooseScreen> {
     showDialog(
       context: context,
       builder: (_) => new AlertDialog(
-        title: Center(child: new Text("Settings")),
+        title: new Text("Settings"),
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
@@ -112,7 +99,6 @@ class _ReserveOrderChooseScreenState extends State<ReserveOrderChooseScreen> {
             ),
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               FlatButton(
                 child: Text('Chiudi'),
@@ -124,12 +110,18 @@ class _ReserveOrderChooseScreenState extends State<ReserveOrderChooseScreen> {
                   child: Text('Accedi'),
                   onPressed: (){
 
-                    if(_passwordController.value.text == CURRENT_PASSWORD){
+                    if(_passwordController.value.text == CURRENT_PASSWORD_ADMIN){
                       setState(() {
                         _passwordController.clear();
                       });
                       Navigator.of(context).pop();
                       Navigator.pushNamed(context, AdminConsoleMenuScreen.id);
+                    }else if(_passwordController.value.text == CURRENT_PASSWORD_ADMIN_2_LEV){
+                      setState(() {
+                        _passwordController.clear();
+                      });
+                      Navigator.of(context).pop();
+                      Navigator.pushNamed(context, AdminConsoleReservationScreen.id);
                     }else{
                       setState(() {
                         _passwordController.clear();

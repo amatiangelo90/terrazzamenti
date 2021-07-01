@@ -1,5 +1,5 @@
 name: vigneto
-description: Il Vigneto.
+description: terrazzanenti.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -32,10 +32,11 @@ dependencies:
   firebase_core:
   cloud_firestore: ^1.0.7
   provider:
-  uuid: ^2.2.2
+  uuid: ^3.0.4
   cupertino_icons: ^1.0.2
   modal_bottom_sheet: ^2.0.0
   expansion_card:
+  mysql1: ^0.19.2
 
 dev_dependencies:
   flutter_test:

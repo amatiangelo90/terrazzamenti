@@ -27,23 +27,28 @@ class Utils{
     return allergensString.substring(0, allergensString.length -2);
   }
 
-  static List<DateTime> getAvailableData(){
+  static List<DateTime> getUnavailableData(){
     return [
-      DateTime.utc(2021,5 ,1 ,0 ,0 ,0 ,0 ,0),
-      DateTime.utc(2021,5 ,2 ,0 ,0 ,0 ,0 ,0),
-      DateTime.utc(2021,5 ,6 ,0 ,0 ,0 ,0 ,0),
-      DateTime.utc(2021,5 ,7 ,0 ,0 ,0 ,0 ,0),
-      DateTime.utc(2021,5 ,8 ,0 ,0 ,0 ,0 ,0),
-      DateTime.utc(2021,5 ,9 ,0 ,0 ,0 ,0 ,0),
-      DateTime.utc(2021,5 ,14 ,0 ,0 ,0 ,0 ,0),
-      DateTime.utc(2021,5 ,15 ,0 ,0 ,0 ,0 ,0),
-      DateTime.utc(2021,5 ,16 ,0 ,0 ,0 ,0 ,0),
-      DateTime.utc(2021,5 ,21 ,0 ,0 ,0 ,0 ,0),
-      DateTime.utc(2021,5 ,22 ,0 ,0 ,0 ,0 ,0),
-      DateTime.utc(2021,5 ,23 ,0 ,0 ,0 ,0 ,0),
-      DateTime.utc(2021,5 ,28 ,0 ,0 ,0 ,0 ,0),
-      DateTime.utc(2021,5 ,29 ,0 ,0 ,0 ,0 ,0),
-      DateTime.utc(2021,5 ,30 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,6 ,7 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,6 ,14 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,6 ,15 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,6 ,16 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,6, 21 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,6, 28 ,0 ,0 ,0 ,0 ,0),
+    ];
+  }
+
+  static List<DateTime> getUnavailableDataToday(){
+    return [
+      DateTime.utc(2021,6 ,7 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,6 ,14 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,6 ,15 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,6 ,16 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,6 ,19 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,6 ,21 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,6 ,22 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,6, 23 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,6, 28 ,0 ,0 ,0 ,0 ,0),
     ];
   }
 
@@ -324,11 +329,6 @@ class Utils{
         ),
       ],
     );
-  }
-
-  static List<DateTime> getUnavailableData(){
-    return [
-    ];
   }
 
   static String getNameByType(String type) {

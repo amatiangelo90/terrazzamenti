@@ -216,7 +216,7 @@ class _ManageMenuItemPageState extends State<ManageMenuItemPage> {
                                   print('Update menu [' + productBase.category + ']');
                                   CRUDModel crudModel = CRUDModel(this.widget.menuType);
                                   productBase.price = _price;
-                                  productBase.name = _nameController.value.text;
+                                  productBase.name = _nameController.value.text.replaceAll("\"", "\'");
                                   productBase.listIngredients = _ingredientsController.value.text.split(",");
                                   /*productBase.category = _selectedCategory.cat;*/
                                   await crudModel.updateProduct(productBase, productBase.id);

@@ -40,7 +40,7 @@ class _CartScreenState extends State<CartScreen> {
     _total = 0.0;
     this.widget.cartItems.forEach((cartItem){
       setState(() {
-        _total = _total + ((cartItem.product.price - ((cartItem.product.price/100)*cartItem.product.discountApplied)) * cartItem.numberOfItem);
+        _total = _total + (cartItem.product.price * cartItem.numberOfItem);
       });
     });
   }
@@ -76,7 +76,13 @@ class _CartScreenState extends State<CartScreen> {
         iconTheme: IconThemeData(
           color: Colors.white,
         ),
-        title: Center(child: Text("Carrello", style: TextStyle(color: Colors.white, fontSize: 19.0, fontFamily: 'LoraFont'),)),
+        title: Center(child: Column(
+          children: [
+            Text("Carrello", style: TextStyle(color: Colors.white, fontSize: 19.0, fontFamily: 'LoraFont'),),
+            Text('Sessione ' +this.widget.uniqueId , style: TextStyle(color: Colors.white, fontSize: 7.0, fontFamily: 'LoraFont'),),
+
+          ],
+        )),
         elevation: 0.0,
         actions: [
           IconButton(

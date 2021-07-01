@@ -7,6 +7,7 @@ import 'package:vigneto/screen/reserve_order_screen.dart';
 import 'package:vigneto/screen/splash_screen_vigneto.dart';
 import 'package:vigneto/screen/table_covers_screen.dart';
 
+import 'dash_menu/admin_console_scree_reservation.dart';
 import 'dash_menu/admin_console_screen_menu.dart';
 
 void main() {
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
                   AdminConsoleMenuScreen.id : (context) => AdminConsoleMenuScreen(),
                   ReserveOrderChooseScreen.id : (context) => ReserveOrderChooseScreen(),
                   TableReservationScreen.id : (context) => TableReservationScreen(),
+                  AdminConsoleReservationScreen.id : (context) => AdminConsoleReservationScreen(),
                 }
             );
           }

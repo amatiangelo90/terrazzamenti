@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Dao{
+
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final String collectionPath;
   CollectionReference _collectionReference;
@@ -13,13 +14,13 @@ class Dao{
     return _collectionReference.orderBy('price').get();
   }
   Future<QuerySnapshot> getWineCollectionOrderedByType(){
-    return _collectionReference.orderBy('category', descending: true).get();
+    return _collectionReference.orderBy('category', descending: true).orderBy('name').get();
   }
   Future<QuerySnapshot> getOrdersStoreCollection() {
-    return _collectionReference.get();
+    return _collectionReference.orderBy('date', descending: true).get();
   }
   Future<QuerySnapshot> getReservationStoreCollection() {
-    return _collectionReference.get();
+    return _collectionReference.orderBy('id', descending: true).get();
   }
 
   Stream<QuerySnapshot> streamDataCollection(){

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vigneto/dao/crud_model.dart';
+import 'package:vigneto/dash_menu/admin_console_scree_reservation.dart';
 import 'package:vigneto/dash_menu/admin_console_screen_menu.dart';
 import 'package:vigneto/models/cart.dart';
 import 'package:vigneto/models/product.dart';
@@ -18,10 +19,9 @@ class TerrazzamentiHomeScreen extends StatefulWidget {
 
   final String covers;
   final String tableNumber;
-  final String uniqueId;
 
 
-  TerrazzamentiHomeScreen({@required this.covers, @required this.tableNumber, @required this.uniqueId});
+  TerrazzamentiHomeScreen({@required this.covers, @required this.tableNumber});
 
   @override
   _TerrazzamentiHomeScreenState createState() => _TerrazzamentiHomeScreenState();
@@ -29,6 +29,7 @@ class TerrazzamentiHomeScreen extends StatefulWidget {
 
 class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
 
+  String _sessionId;
   List<Product> fromOsteriaProductList = <Product>[];
   List<Product> wineProductList = <Product>[];
 
@@ -37,6 +38,7 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
   final _passwordController = TextEditingController();
   String currentMenuType = VIGNETO_WINELIST;
   int currentMenuItem = 0;
+
 
   PageController controller = PageController(
       initialPage: 0);
@@ -92,6 +94,7 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
   void initState() {
     scrollViewColtroller = ScrollController();
     scrollViewColtroller.addListener(_scrollListener);
+    _sessionId = Uuid().v1();
     super.initState();
   }
 
@@ -196,8 +199,14 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
               iconTheme: IconThemeData(color: VIGNETO_BROWN),
               backgroundColor: Colors.black,
               elevation: 3.0,
-              title: Text('Menù',
-                style: TextStyle(fontSize: 16.0, color: Colors.white, fontFamily: 'LoraFont'),
+              title: Column(
+                children: [
+                  Text('Menù',
+                    style: TextStyle(fontSize: 16.0, color: Colors.white, fontFamily: 'LoraFont'),
+                  ),
+                  Text('Sessione ' +_sessionId , style: TextStyle(color: Colors.white, fontSize: 7.0, fontFamily: 'LoraFont'),),
+
+                ],
               ),
               centerTitle: true,
               actions: [
@@ -218,7 +227,7 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
                               MaterialPageRoute(builder: (context) => CartScreen(
                                 cartItems: cartProductList,
                                 function: removeProductFromCart,
-                                uniqueId: this.widget.uniqueId,
+                                uniqueId: _sessionId,
                                 tableNumber: this.widget.tableNumber,
                                 covers: this.widget.covers,
                               ),
@@ -272,7 +281,7 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Text('Tavolo Numero : ' + this.widget.tableNumber, style: TextStyle(fontSize: 15, color: Colors.white),),
+                              Text(this.widget.tableNumber, style: TextStyle(fontSize: 15, color: Colors.white),),
                               Text('Coperti : ' + this.widget.covers, style: TextStyle(fontSize: 15, color: Colors.white),),
                             ],
                           ),
@@ -395,10 +404,25 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
             splashColor: Colors.greenAccent,
             highlightColor: Colors.blueGrey.withOpacity(0.5),
             onTap: () {
+              product.available == 'true' ?
               showDialog(
                   context: context,
                   builder: (context) {
                     return ModalAddItem(product: product, updateCountCallBack: updateCurrentMenuItemCount);
+                  }
+              ) : showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                      content: Text(product.name + ' Esaurito', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                      actions: <Widget>[
+                        FlatButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: const Text("Indietro"),
+                        ),
+                      ],
+                    );
                   }
               );
             },
@@ -410,9 +434,9 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     boxShadow: [
                       BoxShadow(
-                        color: VIGNETO_BROWN,
-                        spreadRadius: 1.0,
-                        blurRadius: 1.0,
+                        color: product.available == 'true' ? VIGNETO_BROWN : Colors.deepOrange.shade900,
+                        spreadRadius: product.available == 'true' ? 3.0 : 1.0,
+
                       ),
                     ]
                 ),
@@ -439,11 +463,18 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
                                   padding: const EdgeInsets.only(left: 5.0, bottom: 5.0),
                                   child: Text(product.name, style: TextStyle(fontSize: 16.0,color: Colors.white, fontFamily: 'LoraFont'),),
                                 ),
+
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
                                   child: Text(Utils.getIngredientsFromProduct(product), overflow: TextOverflow.ellipsis , style: TextStyle(fontSize: 11.0, color: Colors.white, fontFamily: 'LoraFont'),),
                                 ),
-                                Text('',),
+                                product.available == 'true' ? Padding(
+                                  padding: const EdgeInsets.only(left: 5.0, bottom: 5.0),
+                                  child: Text('', style: TextStyle(fontSize: 10.0,color: Colors.white, fontFamily: 'LoraFont'),),
+                                ) : Padding(
+                                  padding: const EdgeInsets.only(left: 5.0, bottom: 5.0),
+                                  child: Text('Esaurito', style: TextStyle(fontSize: 16.0,color: Colors.deepOrange.shade900, fontFamily: 'LoraFont'),),
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
                                   child: Text('€ ' + product.price.toString(), overflow: TextOverflow.ellipsis , style: TextStyle(fontSize: 14.0, color: Colors.white, fontFamily: 'LoraFont'),),
@@ -835,66 +866,72 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
 
   _showModalSettingsAccess() {
     showDialog(
-        context: context,
-        builder: (_) => new AlertDialog(
-          title: new Text("Settings"),
-          actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
-              child: Center(
-                child: Card(
-                  color: Colors.white,
-                  child: TextField(
-                    style: TextStyle(color: Colors.black),
-                    keyboardType: TextInputType.number,
-                    cursorColor: Colors.black,
-                    controller: _passwordController,
-                    textAlign: TextAlign.center,
-                    decoration: InputDecoration(
-                      enabledBorder: const OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.black, width: 0.0),
-                      ),
-                      labelStyle: TextStyle(color: Colors.black),
-                      fillColor: Colors.black,
-                      labelText: 'Password',
+      context: context,
+      builder: (_) => new AlertDialog(
+        title: new Text("Settings"),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+            child: Center(
+              child: Card(
+                color: Colors.white,
+                child: TextField(
+                  style: TextStyle(color: Colors.black),
+                  keyboardType: TextInputType.number,
+                  cursorColor: Colors.black,
+                  controller: _passwordController,
+                  textAlign: TextAlign.center,
+                  decoration: InputDecoration(
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.black, width: 0.0),
                     ),
+                    labelStyle: TextStyle(color: Colors.black),
+                    fillColor: Colors.black,
+                    labelText: 'Password',
                   ),
                 ),
               ),
             ),
-            Row(
-              children: [
-                FlatButton(
-                  child: Text('Chiudi'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                FlatButton(
-                    child: Text('Accedi'),
-                    onPressed: (){
+          ),
+          Row(
+            children: [
+              FlatButton(
+                child: Text('Chiudi'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                  child: Text('Accedi'),
+                  onPressed: (){
 
-                      if(_passwordController.value.text == CURRENT_PASSWORD){
-                        setState(() {
-                          _passwordController.clear();
-                        });
-                        Navigator.of(context).pop();
-                        Navigator.pushNamed(context, AdminConsoleMenuScreen.id);
-                      }else{
-                        setState(() {
-                          _passwordController.clear();
-                        });
+                    if(_passwordController.value.text == CURRENT_PASSWORD_ADMIN){
+                      setState(() {
+                        _passwordController.clear();
+                      });
+                      Navigator.of(context).pop();
+                      Navigator.pushNamed(context, AdminConsoleMenuScreen.id);
+                    }else if(_passwordController.value.text == CURRENT_PASSWORD_ADMIN_2_LEV){
+                      setState(() {
+                        _passwordController.clear();
+                      });
+                      Navigator.of(context).pop();
+                      Navigator.pushNamed(context, AdminConsoleReservationScreen.id);
+                    }else{
+                      setState(() {
+                        _passwordController.clear();
+                      });
 
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(SnackBar(backgroundColor: Colors.red.shade500 ,
-                            content: Text('Password errata')));
-                      }
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(backgroundColor: Colors.red.shade500 ,
+                          content: Text('Password errata')));
                     }
-                ),
-              ],
-            )
-          ],
-        ),
+                  }
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }

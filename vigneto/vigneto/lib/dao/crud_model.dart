@@ -86,13 +86,17 @@ class CRUDModel{
     return  Product.fromMap(doc.data(), doc.id) ;
   }
 
-
   Future removeProduct(String id) async{
     await _dao.removeDocument(id) ;
     return ;
   }
   Future updateProduct(Product data, String id) async{
     await _dao.updateDocument(data.toJson(), id) ;
+    return ;
+  }
+
+  Future updateOrder(OrderStore orderStore, String id) async{
+    await _dao.updateDocument(orderStore.toJson(), id) ;
     return ;
   }
 
@@ -162,6 +166,7 @@ class CRUDModel{
         currentItem = currentItem.toString().replaceAll(' product', 'product');
         currentItem = currentItem.toString().replaceAll(' numberOfItem', 'numberOfItem');
         currentItem = currentItem.toString().replaceAll(' changes', 'changes');
+
         Map valueMap = json.decode(currentItem);
         listCart.add(Cart(
             product : Product('', valueMap['product'], '', ["-"], ["-"], 0.0, 0, ["-"], '', 'true'),
@@ -178,7 +183,8 @@ class CRUDModel{
 
   }
 
-  Future addReservation(String uniqueId,
+  Future addReservation(
+      String uniqueId,
       String docId,
       String id,
       String name,

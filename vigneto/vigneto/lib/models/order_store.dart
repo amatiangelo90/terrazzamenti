@@ -39,7 +39,7 @@ class OrderStore {
       'name' : name,
       'cartItemsList': serializeList(cartItemsList),
       'date': date,
-      'total' : total + ' €',
+      'total' : total,
       'confirmed' : confirmed,
       'typeOrder' : typeOrder,
       'datePickupDelivery' : datePickupDelivery,
@@ -79,17 +79,5 @@ class OrderStore {
     });
     return orderDeserialized;
   }
-
-  @override
-  String toString() {
-    return 'Name: ' + name + ' - Hour PickupDelivery: '
-        + hourPickupDelivery + ' '
-        '- Cart: ' + cartItemsList.toString();
-  }
-
-  void buildCartListFromListOfString(String cartList) {
-    print(cartList);
-  }
-
 
 }

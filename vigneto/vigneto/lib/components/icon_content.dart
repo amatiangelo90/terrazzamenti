@@ -31,9 +31,12 @@ class IconContent extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Center(
-            child: Text(
-              description,
-              style: TextStyle(color: VIGNETO_BROWN, fontSize: 16.0, fontFamily: 'LoraFont'),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+              child: Text(
+                description,
+                style: TextStyle(color: VIGNETO_BROWN, fontSize: 16.0, fontFamily: 'LoraFont'),
+              ),
             ),
           ),
         )

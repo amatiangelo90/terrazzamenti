@@ -1,35 +1,35 @@
-
 import'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:vigneto/dao/crud_model.dart';
-import 'package:vigneto/models/reservation_model.dart';
 import 'package:vigneto/screen/confirm_order_screen.dart';
-import 'package:vigneto/screen/services/http_service.dart';
 import 'package:vigneto/utils/costants.dart';
 import 'package:vigneto/utils/round_icon_botton.dart';
 import 'package:vigneto/utils/utils.dart';
 
-class TableReservationScreen extends StatefulWidget {
+class TableReservationScreenDash extends StatefulWidget {
 
   static String id = 'reservation';
+  final Function updateFunction;
+
+
+  TableReservationScreenDash({@required this.updateFunction});
 
   @override
-  _TableReservationScreenState createState() => _TableReservationScreenState();
+  _TableReservationScreenDashState createState() => _TableReservationScreenDashState();
 }
 
-class _TableReservationScreenState extends State<TableReservationScreen> {
+class _TableReservationScreenDashState extends State<TableReservationScreenDash> {
 
   DateTime _selectedDateTime;
   final _datePikerController = DatePickerController();
   int _covers = 1;
   ScrollController scrollViewColtroller = ScrollController();
 
-  List<TimeSlotPickup> _slotsPicker;
+  List<TimeSlotPickup> _slotsPicker = TimeSlotPickup.getReservationSlots();
   List<DropdownMenuItem<TimeSlotPickup>> _dropdownTimeSlotPickup;
   TimeSlotPickup _selectedTimeSlotPikup;
-
-  List<ReservationModel> _reservationList;
 
   final _nameController = TextEditingController();
   final _customerNumber = TextEditingController();
@@ -43,12 +43,9 @@ class _TableReservationScreenState extends State<TableReservationScreen> {
 
   @override
   void initState() {
-    super.initState();
-    _slotsPicker = TimeSlotPickup.getReservationSlots();
     _dropdownTimeSlotPickup = buildDropdownSlotPickup(_slotsPicker);
     _selectedTimeSlotPikup = _dropdownTimeSlotPickup[0].value;
-
-    initReservationList();
+    super.initState();
   }
 
   List<DropdownMenuItem<TimeSlotPickup>> buildDropdownSlotPickup(List slots) {
@@ -77,7 +74,7 @@ class _TableReservationScreenState extends State<TableReservationScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Richiesta Prenotazione',style: TextStyle(fontSize: 20.0, fontFamily: 'LoraFont'),),
+          title: Text('Aggiungi Prenotazione by Admin',style: TextStyle(fontSize: 20.0, fontFamily: 'LoraFont'),),
           backgroundColor: Colors.black,
           centerTitle: true,
         ),
@@ -161,7 +158,7 @@ class _TableReservationScreenState extends State<TableReservationScreen> {
                     DatePicker(
                       DateTime.now(),
                       initialSelectedDate: DateTime.now(),
-                      inactiveDates: Utils.getUnavailableDataToday(),
+                      inactiveDates: Utils.getUnavailableData(),
                       dateTextStyle: TextStyle(color: Colors.white, fontSize: 16.0, fontFamily: 'LoraFont'),
                       dayTextStyle: TextStyle(color: Colors.white, fontSize: 14.0, fontFamily: 'LoraFont'),
                       monthTextStyle: TextStyle(color: Colors.white, fontSize: 12.0, fontFamily: 'LoraFont'),
@@ -205,112 +202,116 @@ class _TableReservationScreenState extends State<TableReservationScreen> {
               ),
 
               RaisedButton(
-                  child: Text('Invia Prenotazione' ,style: TextStyle(color: Colors.white, fontSize: 20.0, fontFamily: 'LoraFont')),
-                  color: VIGNETO_BROWN,
+                  child: Text('Aggiungi Prenotazione',style: TextStyle(color: Colors.white, fontSize: 20.0,)),
+                  color: Colors.green,
                   elevation: 5.0,
-                  onPressed: ()async {
-                try{
-                  if(_nameController.value.text == ''){
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
-                          content: Text('Inserire il nome', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
-                          actions: <Widget>[
-                            FlatButton(
-                              onPressed: () => Navigator.of(context).pop(false),
-                              child: const Text("Indietro"),
-                            ),
-                          ],
+                  onPressed:  () async {
+                    try{
+                      if(_nameController.value.text == ''){
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                              content: Text('Inserire il nome', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                              actions: <Widget>[
+                                FlatButton(
+                                  onPressed: () => Navigator.of(context).pop(false),
+                                  child: const Text("Indietro"),
+                                ),
+                              ],
+                            );
+                          },
                         );
-                      },
-                    );
-                  }else if(_customerNumber.value.text == ''){
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
-                          content: Text('Inserire numero cellulare', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
-                          actions: <Widget>[
-                            FlatButton(
-                              onPressed: () => Navigator.of(context).pop(false),
-                              child: const Text("Indietro"),
-                            ),
-                          ],
+                      }else if(_customerNumber.value.text == ''){
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                              content: Text('Inserire numero cellulare', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                              actions: <Widget>[
+                                FlatButton(
+                                  onPressed: () => Navigator.of(context).pop(false),
+                                  child: const Text("Indietro"),
+                                ),
+                              ],
+                            );
+                          },
                         );
-                      },
-                    );
-                  }else if(_selectedDateTime == null){
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
-                          content: Text('Selezionare la data per la prenotazione', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
-                          actions: <Widget>[
-                            FlatButton(
-                              onPressed: () => Navigator.of(context).pop(false),
-                              child: const Text("Indietro"),
-                            ),
-                          ],
+                      }else if(_selectedDateTime == null){
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                              content: Text('Selezionare la data per la prenotazione', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                              actions: <Widget>[
+                                FlatButton(
+                                  onPressed: () => Navigator.of(context).pop(false),
+                                  child: const Text("Indietro"),
+                                ),
+                              ],
+                            );
+                          },
                         );
-                      },
-                    );
-                  } else if(_selectedTimeSlotPikup.slot == 'Seleziona Orario'){
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
-                          content: Text('Seleziona Orario', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
-                          actions: <Widget>[
-                            FlatButton(
-                              onPressed: () => Navigator.of(context).pop(false),
-                              child: const Text("Indietro"),
-                            ),
-                          ],
+                      } else if(_selectedTimeSlotPikup.slot == 'Seleziona Orario'){
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                              content: Text('Seleziona Orario', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                              actions: <Widget>[
+                                FlatButton(
+                                  onPressed: () => Navigator.of(context).pop(false),
+                                  child: const Text("Indietro"),
+                                ),
+                              ],
+                            );
+                          },
                         );
-                      },
-                    );
-                  } else {
-                    HttpService.sendReservationMessage(
-                        numberTerrazzamentiReservation,
-                        buildMessageReservation(
+                      } else if(_covers == 0){
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                              content: Text('Seleziona numero coperti', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                              actions: <Widget>[
+                                FlatButton(
+                                  onPressed: () => Navigator.of(context).pop(false),
+                                  child: const Text("Indietro"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        CRUDModel crudModel = CRUDModel(RESERVATION_TRACKER);
+
+                        await crudModel.addReservation(
+                            '',
+                            '',
+                            '',
                             _nameController.value.text,
                             getCurrentDateTime(),
+                            Utils.getWeekDay(_selectedDateTime.weekday) +" ${_selectedDateTime.day} " + Utils.getMonthDay(_selectedDateTime.month),
+                            _customerNumber.value.text,
                             _selectedTimeSlotPikup.slot,
-                            _selectedDateTime,
-                            _covers.toString()),
-                        getCurrentDateTime(),
-                        '',
-                        '',
-                        _nameController.value.text,
-                        getCurrentDateTime(),
-                        Utils.getWeekDay(_selectedDateTime.weekday) +" ${_selectedDateTime.day} " + Utils.getMonthDay(_selectedDateTime.month),
-                        _customerNumber.value.text,
-                        _selectedTimeSlotPikup.slot,
-                        _covers.toString(),
-                        false,
-                        getCurrentDateTime(),
-                      context
-                    );
-
+                            _covers.toString(),
+                            false);
+                        Navigator.of(context).pop(false);
+                        this.widget.updateFunction();
+                      }
+                    }catch(e){
+                      CRUDModel crudModel = CRUDModel('errors-report');
+                      await crudModel.addException(
+                          'Error report',
+                          e.toString(),
+                          DateTime.now().toString());
+                    }
                   }
-                }catch(e){
-                  CRUDModel crudModel = CRUDModel('errors-report');
-                  await crudModel.addException(
-                      'Error report',
-                      e.toString(),
-                      DateTime.now().toString());
-                }
-              }
-              ),
-
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Center(child: Text('Al fine di ritenere valida la prenotazione sarà concesso un ritardo massimo di dieci minuti.', style: TextStyle(color: Colors.white),)),
               ),
             ],
           ),
@@ -327,36 +328,35 @@ class _TableReservationScreenState extends State<TableReservationScreen> {
       DateTime selectedDateTime,
       String coperti) {
 
-    String message =
-        "PRENOTAZIONE TERRAZZAMENTI" +
-            "%0a%0a"+
-            "  - Nome: $name" +
-            "%0a  - Data Prenotazione: " + Utils.getWeekDay(selectedDateTime.weekday) +" ${selectedDateTime.day} " + Utils.getMonthDay(selectedDateTime.month) +
-            "%0a  - Ore: $slot " +
-            "%0a  - Coperti : $coperti";
 
+    String message =
+        "RICHIESTA PRENOTAZIONE%0a" +
+            "%0aTerrazzamenti Valle D\'Itria%0a"+
+            "%0aNome: $name%0a" +
+            "%0aIndirizzo: Viale Stazione 12" +
+            "%0aCittà: Locorotondo(BR) (72014)" +
+            "%0a" +
+            "%0aData Prenotazione: " + Utils.getWeekDay(selectedDateTime.weekday) +" ${selectedDateTime.day} " + Utils.getMonthDay(selectedDateTime.month) +
+
+            "%0aOre: $slot " +
+            "%0aCoperti : $coperti";
+
+    message = message.replaceAll('&', '%26');
     return message;
 
   }
 
+
   String getCurrentDateTime() {
-    return DateTime.now().toString();
+    var now = new DateTime.now();
+    var formatter = new DateFormat.yMd().add_jm();
+    return formatter.format(now);
   }
 
   _setSelectedDate(DateTime date) {
     setState(() {
       _selectedDateTime = date;
-      _slotsPicker = TimeSlotPickup.getReservationSlotsByAlreadyReservationDone(_reservationList, _selectedDateTime);
-      _dropdownTimeSlotPickup = buildDropdownSlotPickup(_slotsPicker);
-      _selectedTimeSlotPikup = _dropdownTimeSlotPickup[0].value;
     });
-
-
-  }
-
-  Future<void> initReservationList() async {
-    CRUDModel crudModel = CRUDModel(RESERVATION_TRACKER);
-    _reservationList = await crudModel.fetchReservation();
   }
 }
 

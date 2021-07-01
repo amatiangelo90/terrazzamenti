@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vigneto/models/cart.dart';
+import 'package:vigneto/models/reservation_model.dart';
+import 'package:vigneto/screen/reserve_order_screen.dart';
 import 'package:vigneto/screen/services/http_service.dart';
 import 'package:vigneto/utils/costants.dart';
 import 'package:vigneto/utils/utils.dart';
@@ -25,7 +28,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   List<TimeSlotPickup> _slotsPicker = TimeSlotPickup.getPickupSlots();
 
   List<DropdownMenuItem<TimeSlotPickup>> _dropdownTimeSlotPickup;
-
+  var _isButtonEnabled = true;
   TimeSlotPickup _selectedTimeSlotPikup;
 
   List<PaymentPreference> _paymentType = PaymentPreference
@@ -37,10 +40,12 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
 
 
   final _nameController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
+    _phoneNumberController.dispose();
     super.dispose();
   }
 
@@ -95,6 +100,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
 
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -128,6 +134,7 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                           elevation: 0.0,
                           child: Column(
                             children: [
+                              Text('Sessione ' +this.widget.uniqueId , style: TextStyle(color: Colors.white, fontSize: 7.0, fontFamily: 'LoraFont'),),
                               Padding(
                                 padding: const EdgeInsets.all(10.0),
                                 child: Row(
@@ -169,6 +176,28 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                                   labelStyle: TextStyle(color: Colors.white),
                                   fillColor: Colors.white,
                                   labelText: 'Nome',
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),Padding(
+                          padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+                          child: Center(
+                            child: Card(
+                              color: Colors.black,
+                              child: TextField(
+                                keyboardType: TextInputType.number,
+                                style: TextStyle(color: Colors.white),
+                                cursorColor: Colors.white,
+                                controller: _phoneNumberController,
+                                textAlign: TextAlign.center,
+                                decoration: InputDecoration(
+                                  enabledBorder: const OutlineInputBorder(
+                                    borderSide: const BorderSide(color: Colors.white, width: 0.0),
+                                  ),
+                                  labelStyle: TextStyle(color: Colors.white),
+                                  fillColor: Colors.white,
+                                  labelText: 'Cellulare',
                                 ),
                               ),
                             ),
@@ -225,81 +254,124 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                             ),
                           ),
                         ),
-                        IconButton(
-                            icon: Image.asset('images/whatappicon.png'),
-                            iconSize: 90.0, onPressed: (){
-                          if(_nameController.value.text == ''){
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
-                                  content: Text('Inserire il nome', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
-                                  actions: <Widget>[
-                                    FlatButton(
-                                      onPressed: () => Navigator.of(context).pop(false),
-                                      child: const Text("Indietro"),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          } else if(_selectedTimeSlotPikup.slot == 'Seleziona Orario Consegna'){
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
-                                  content: Text('Seleziona Orario Consegna', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
-                                  actions: <Widget>[
-                                    FlatButton(
-                                      onPressed: () => Navigator.of(context).pop(false),
-                                      child: const Text("Indietro"),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          } else if(_selectedPaymentPreference.type == 'Selezione Preferenza Pagamento'){
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
-                                  content: Text('Selezione Preferenza Pagamento', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
-                                  actions: <Widget>[
-                                    FlatButton(
-                                      onPressed: () => Navigator.of(context).pop(false),
-                                      child: const Text("Indietro"),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          } else{
-                            HttpService.sendDeliveryMessage(numberTerrazzamenti,
-                                buildMessageFromCartPickUp(
-                                    this.widget.cartItems,
-                                    _nameController.value.text,
-                                    this.widget.total.toString(),
-                                    getCurrentDateTime(),
-                                    _selectedTimeSlotPikup.slot,
-                                    this.widget.tableNumber,
-                                    this.widget.covers,
-                                    _selectedPaymentPreference.type
-                                ),
-                                _nameController.value.text,
-                                this.widget.total.toString(),
-                                getCurrentDateTime(),
-                                this.widget.cartItems,
-                                this.widget.uniqueId,
-                                'Delivery',
-                                Utils.getWeekDay(DateTime.now().weekday) +" ${DateTime.now().day} " + Utils.getMonthDay(DateTime.now().month),
-                                _selectedTimeSlotPikup.slot,
-                                EMPTY_STRING,
-                                EMPTY_STRING);
-                          }
-                        }
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _isButtonEnabled ? RaisedButton(
+                                child: Text('Invia Ordine',style: TextStyle(color: Colors.white, fontSize: 20.0, fontFamily: 'LoraFont')),
+                                color: VIGNETO_BROWN,
+                                elevation: 5.0,
+                                onPressed: () async {
+                                  if(_nameController.value.text == ''){
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                                          content: Text('Inserire il nome', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                                          actions: <Widget>[
+                                            FlatButton(
+                                              onPressed: () => Navigator.of(context).pop(false),
+                                              child: const Text("Indietro"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  } else if(_phoneNumberController.value.text == ''){
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                                          content: Text('Seleziona numero Cellulare', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                                          actions: <Widget>[
+                                            FlatButton(
+                                              onPressed: () => Navigator.of(context).pop(false),
+                                              child: const Text("Indietro"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }
+                                  else if(_selectedTimeSlotPikup.slot == 'Seleziona Orario Consegna'){
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                                          content: Text('Seleziona Orario Consegna', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                                          actions: <Widget>[
+                                            FlatButton(
+                                              onPressed: () => Navigator.of(context).pop(false),
+                                              child: const Text("Indietro"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  } else if(_selectedPaymentPreference.type == 'Selezione Preferenza Pagamento'){
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text('', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                                          content: Text('Selezione Preferenza Pagamento', style: TextStyle(color: Colors.black, fontSize: 16.0, fontFamily: 'LoraFont'),),
+                                          actions: <Widget>[
+                                            FlatButton(
+                                              onPressed: () => Navigator.of(context).pop(false),
+                                              child: const Text("Indietro"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  } else{
+                                    try{
+                                      updateButtonAvailability();
+                                      HttpService.sendTextMessage(
+                                          numberTerrazzamenti,
+                                          buildMessageFromCartPickUp(
+                                              this.widget.cartItems,
+                                              _nameController.value.text,
+                                              this.widget.total.toString(),
+                                              getCurrentDateTime(),
+                                              _selectedTimeSlotPikup.slot,
+                                              this.widget.tableNumber,
+                                              this.widget.covers,
+                                              _selectedPaymentPreference.type
+                                          ),
+                                          _nameController.value.text,
+                                          this.widget.covers,
+                                          this.widget.total.toString(),
+                                          getCurrentDateTime(),
+                                          this.widget.cartItems,
+                                          this.widget.uniqueId,
+                                          'Delivery',
+                                          getDateByHour(),
+                                          _selectedTimeSlotPikup.slot,
+                                          _phoneNumberController.value.text,
+                                          this.widget.tableNumber,
+                                          context);
+                                      Timer(
+                                          Duration(milliseconds: 2000),
+                                              ()=> Navigator.pushNamed(context, ReserveOrderChooseScreen.id));
+                                    }catch(e){
+                                      print('Exception Crud: ' + e.toString());
+                                    }
+                                  }
+                                }
+                            ) : RaisedButton(
+                                child: Text('Invio in Corso',style: TextStyle(color: Colors.white, fontSize: 20.0, fontFamily: 'LoraFont')),
+                                color: Colors.grey,
+                                elevation: 5.0,
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(backgroundColor: Colors.orangeAccent ,
+                                      content: Text('Invio in corso ...')));
+                                }),
+                          ],
                         ),
                       ],
                     ),
@@ -324,49 +396,41 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
       String covers,
       String paymentPreference) {
 
-    String itemList = '';
+    String message =
+        "Terrazzamenti -- "+
+            "Tavolo $tableNumber  -"+
+            " Coperti $covers  -"+
+            " Nome $name  -" +
+            " Ore Consegna: $slot -" +
+            " Tot. " + total;
 
-    cartItems.forEach((element) {
-      itemList = itemList + "%0a" + element.numberOfItem.toString() + " x " + element.product.name;
-      if(element.changes.length != 0){
-        itemList = itemList + "%0a  " + element.changes.toString();
-      }
-    });
-
-    String message;
-
-    message =
-        "%0a Terrazzamenti Valle D'Itria%0a"+
-            "%0a Tavolo: $tableNumber%0a"+
-            " Coperti: $covers%0a%0a"+
-            "%0a Nome: $name" +
-            "%0a Data Ordine: " + Utils.getWeekDay(DateTime.now().weekday) +" ${DateTime.now().day} " + Utils.getMonthDay(DateTime.now().month) +
-            "%0a Ore Consegna: $slot " +
-            "%0a%0a-------------------------------------------------%0a"
-                "%0aOrdine"
-                "%0a"
-            + itemList + "%0a"
-            + "%0a--------------------------------------------------"
-            + "%0a%0a Preferenza Pagamento: " + paymentPreference
-            + "%0a%0a Totale: " + total + " € "
-            + "%0a%0a (Costo servizio 3 € incluso nel totale)";
-
-    message = message.replaceAll('&', '%26');
     return message;
-
   }
 
 
   String getCurrentDateTime() {
-    var now = new DateTime.now();
-    var formatter = new DateFormat.yMd().add_jm();
-    return formatter.format(now);
+    return DateTime.now().toString();
   }
 
   onChangePaymentSelected(PaymentPreference currentPaymentPreferred) {
     setState(() {
       _selectedPaymentPreference = currentPaymentPreferred;
     });
+  }
+
+  void updateButtonAvailability() {
+    setState(() {
+      if(_isButtonEnabled){
+        _isButtonEnabled = false;
+      }
+    });
+  }
+
+  String getDateByHour() {
+    if(DateTime.now().hour < 3)
+      return Utils.getWeekDay(DateTime.now().subtract(Duration(days: 1)).weekday) +" ${DateTime.now().subtract(Duration(days: 1)).day} " + Utils.getMonthDay(DateTime.now().subtract(Duration(days: 1)).month);
+
+      return Utils.getWeekDay(DateTime.now().weekday) +" ${DateTime.now().day} " + Utils.getMonthDay(DateTime.now().month);
   }
 }
 
@@ -383,9 +447,9 @@ class TimeSlotPickup {
     String firstSlot;
     String secondSlot;
 
-    if(currentDatePlus10Min.hour < 17){
-      firstSlot = '17:15';
-      secondSlot = '17:30';
+    if(currentDatePlus10Min.hour < 18 && currentDatePlus10Min.hour > 3){
+      firstSlot = '18:15';
+      secondSlot = '18:30';
     }else{
       if(currentDatePlus10Min.minute >= 0 && currentDatePlus10Min.minute < 15){
         firstSlot = currentDatePlus10Min.hour.toString() + ':15';
@@ -412,18 +476,54 @@ class TimeSlotPickup {
   static List<TimeSlotPickup> getReservationSlots() {
     return <TimeSlotPickup>[
       TimeSlotPickup(1, 'Seleziona Orario'),
-      TimeSlotPickup(2, '17:00'),
-      TimeSlotPickup(3, '17:30'),
-      TimeSlotPickup(4, '18:00'),
-      TimeSlotPickup(5, '18:30'),
-      TimeSlotPickup(6, '19:00'),
-      TimeSlotPickup(7, '19:30'),
-      TimeSlotPickup(8, '20:00'),
-      TimeSlotPickup(9, '20:30'),
-      TimeSlotPickup(10, '21:00'),
-      TimeSlotPickup(11, '21:30'),
-      TimeSlotPickup(12, '22:00'),
+      TimeSlotPickup(2, '18:00'),
+      TimeSlotPickup(3, '19:00'),
+      TimeSlotPickup(4, '20:00'),
+      TimeSlotPickup(5, '21:00'),
+      TimeSlotPickup(6, '22:00'),
+      TimeSlotPickup(7, '23:00'),
     ];
+  }
+
+  static List<TimeSlotPickup> getReservationSlotsByAlreadyReservationDone(
+      List<ReservationModel> reservationList,
+      DateTime selectedDateTime) {
+
+    String currentDateToCheck = Utils.getWeekDay(selectedDateTime.weekday) +" ${selectedDateTime.day} " + Utils.getMonthDay(selectedDateTime.month);
+    Map<String, int> _currentDataMap = Map<String,int>();
+    print('ssdsdffs');
+
+
+    reservationList.forEach((element) {
+
+      if(element.date == currentDateToCheck){
+        if(_currentDataMap.containsKey(element.hour)){
+          _currentDataMap[element.hour] = _currentDataMap[element.hour] + 1;
+        }else{
+          _currentDataMap[element.hour] = 1;
+        }
+      }
+    });
+
+    print(_currentDataMap);
+    List<TimeSlotPickup> returnList = buildTimeSlotPickupListByMap(_currentDataMap);
+    return returnList;
+  }
+
+  static List<TimeSlotPickup> buildTimeSlotPickupListByMap(Map<String, int> currentDataMap) {
+
+    List<String> slotList = ['18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
+
+    List<TimeSlotPickup> list = <TimeSlotPickup>[
+      TimeSlotPickup(1, 'Seleziona Orario'),
+    ];
+
+    for(int i = 0; i < slotList.length; i++){
+      if(!currentDataMap.containsKey(slotList[i]) || (currentDataMap.containsKey(slotList[i]) && currentDataMap[slotList[i]] < 8)){
+        list.add(TimeSlotPickup(i+2, slotList[i]));
+      }
+    }
+    return list;
   }
 }
 

@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:vigneto/dash_menu/admin_console_scree_reservation.dart';
 import 'package:vigneto/dash_menu/admin_console_screen_menu.dart';
-import 'package:vigneto/reservation/reservation_screen.dart';
 import 'package:vigneto/screen/reserve_order_screen.dart';
 import 'package:vigneto/utils/costants.dart';
 import 'package:vigneto/utils/round_icon_botton.dart';
@@ -13,9 +13,6 @@ class TableCoversScreen extends StatefulWidget {
 
   static String id = 'tablecovers';
 
-  final String uniqueId;
-
-  TableCoversScreen({@required this.uniqueId});
 
   @override
   _TableCoversScreenState createState() => _TableCoversScreenState();
@@ -51,7 +48,7 @@ class _TableCoversScreenState extends State<TableCoversScreen> {
             ],
             automaticallyImplyLeading: false,
             backgroundColor: VIGNETO_BROWN,
-            title:  Text('Seleziona Numero Coperti', style: TextStyle(fontSize: 18.0, color: Colors.white, fontFamily: 'LoraFont'),),
+            title:  Text('Seleziona Numero Calici', style: TextStyle(fontSize: 18.0, color: Colors.white, fontFamily: 'LoraFont'),),
             centerTitle: true,
           ),
           backgroundColor: Colors.black,
@@ -61,10 +58,20 @@ class _TableCoversScreenState extends State<TableCoversScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('Tavolo : ' + _tableSelected,
+                Text(_tableSelected,
                   style: TextStyle(fontSize: 25.0,
                       color: Colors.white,
                       fontFamily: 'LoraFont'),),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: Text('Nota: numero coperti utile esclusivamente per quantitativo calici di cui occorrete',
+                      style: TextStyle(overflow: TextOverflow.visible, fontSize: 15.0,
+                          color: Colors.white,
+                          fontFamily: 'LoraFont'),),
+                  ),
+                ),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -72,6 +79,7 @@ class _TableCoversScreenState extends State<TableCoversScreen> {
                     RoundIconButton(
                       icon: FontAwesomeIcons.minus,
                       function: () {
+                        print(DateTime.now().toString());
                         setState(() {
                           if (_covers > 1)
                             _covers = _covers - 1;
@@ -95,12 +103,12 @@ class _TableCoversScreenState extends State<TableCoversScreen> {
                       icon: FontAwesomeIcons.plus,
                       function: () {
                         setState(() {
-                          if(_covers<4){
+                          if(_covers < 8){
                             _covers = _covers + 1;
                           }else{
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(SnackBar(backgroundColor: Colors.red.shade500 ,
-                                content: Text('Avvertenza Covid19 - I coperti per tavolo possono essere al massimo 4')));
+                                content: Text('Avvertenza Covid19 - I coperti per tavolo possono essere al massimo 8')));
                           }
                         });
                       },
@@ -119,7 +127,6 @@ class _TableCoversScreenState extends State<TableCoversScreen> {
                       MaterialPageRoute(builder: (context) => TerrazzamentiHomeScreen(
                         covers: _covers.toString(),
                         tableNumber: _tableSelected,
-                        uniqueId: this.widget.uniqueId,
                       ),
                       ),
                     );
@@ -158,7 +165,7 @@ class _TableCoversScreenState extends State<TableCoversScreen> {
                     onTap: () {
                       setState(() {
                         _isTableSelected = true;
-                        _tableSelected = (index+1).toString();
+                        _tableSelected = 'Tavolo ${index+1}';
                       });
                     },
                     child: Center(
@@ -170,7 +177,7 @@ class _TableCoversScreenState extends State<TableCoversScreen> {
                         child: Center(
                           child: Text(
                             'Tavolo ${index+1}',
-                            style: TextStyle(fontSize: 13,color: Colors.white, fontFamily: 'LoraFont'),
+                            style: TextStyle(fontSize: 14,color: Colors.white, fontFamily: 'LoraFont'),
                           ),
                         ),
                       ),
@@ -226,12 +233,18 @@ class _TableCoversScreenState extends State<TableCoversScreen> {
                   child: Text('Accedi'),
                   onPressed: (){
 
-                    if(_passwordController.value.text == CURRENT_PASSWORD){
+                    if(_passwordController.value.text == CURRENT_PASSWORD_ADMIN){
                       setState(() {
                         _passwordController.clear();
                       });
                       Navigator.of(context).pop();
                       Navigator.pushNamed(context, AdminConsoleMenuScreen.id);
+                    }else if(_passwordController.value.text == CURRENT_PASSWORD_ADMIN_2_LEV){
+                      setState(() {
+                        _passwordController.clear();
+                      });
+                      Navigator.of(context).pop();
+                      Navigator.pushNamed(context, AdminConsoleReservationScreen.id);
                     }else{
                       setState(() {
                         _passwordController.clear();

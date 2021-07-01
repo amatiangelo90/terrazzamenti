@@ -37,7 +37,6 @@ class _SplashScreenTerrazzamentiState extends State<SplashScreenTerrazzamenti> {
 
     Timer(
         Duration(milliseconds: 3000),
-            ()=> Navigator.push(context,
-          MaterialPageRoute(builder: (context) => ReserveOrderChooseScreen(uniqueId: Uuid().v1(),),),));
+            ()=> Navigator.pushNamed(context, ReserveOrderChooseScreen.id));
   }
 }
