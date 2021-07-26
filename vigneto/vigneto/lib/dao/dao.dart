@@ -13,6 +13,11 @@ class Dao{
   Future<QuerySnapshot> getDataCollection(){
     return _collectionReference.orderBy('price').get();
   }
+
+  Future<QuerySnapshot> getConfiguration(){
+    return _collectionReference.get();
+  }
+
   Future<QuerySnapshot> getWineCollectionOrderedByType(){
     return _collectionReference.orderBy('category', descending: true).orderBy('name').get();
   }
@@ -34,6 +39,8 @@ class Dao{
   Future<void> removeDocument(String id){
     return _collectionReference.doc(id).delete();
   }
+
+
   Future<DocumentReference> addDocument(Map data) {
     return _collectionReference.add(data);
   }

@@ -223,16 +223,25 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
                         color: Colors.white,
                       ),
                           onPressed: (){
-                            Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => CartScreen(
-                                cartItems: cartProductList,
-                                function: removeProductFromCart,
-                                uniqueId: _sessionId,
-                                tableNumber: this.widget.tableNumber,
-                                covers: this.widget.covers,
-                              ),
-                              ),
-                            );
+                            if(isCartProductContainsWine(cartProductList)){
+                              Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => CartScreen(
+                                  cartItems: cartProductList,
+                                  function: removeProductFromCart,
+                                  uniqueId: _sessionId,
+                                  tableNumber: this.widget.tableNumber,
+                                  covers: this.widget.covers,
+                                ),
+                                ),
+                              );
+
+                            }else{
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(backgroundColor: Colors.red.shade500 ,
+                                  content: Text('Inserire almeno 1 bottiglia di vino nell\'ordine')));
+
+                            }
+
                           }),
                       currentMenuItem == 0 ? Text('') :
                       Positioned(
@@ -281,7 +290,7 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Text(this.widget.tableNumber, style: TextStyle(fontSize: 15, color: Colors.white),),
+                              Text('Tavolo: ' + this.widget.tableNumber, style: TextStyle(fontSize: 15, color: Colors.white),),
                               Text('Coperti : ' + this.widget.covers, style: TextStyle(fontSize: 15, color: Colors.white),),
                             ],
                           ),
@@ -397,7 +406,7 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
     List<Product> productList = await getCurrentProductList(currentMenuType);
 
     productList.forEach((product) {
-      if(listTypeWine.contains(product.category)){
+      if(listTypeBeverage.contains(product.category)){
         items.add(
           InkWell(
             hoverColor: Colors.blueGrey,
@@ -933,6 +942,20 @@ class _TerrazzamentiHomeScreenState extends State<TerrazzamentiHomeScreen> {
         ],
       ),
     );
+  }
+
+  bool isCartProductContainsWine(List<Cart> cartProductList) {
+
+    bool contains = false;
+
+    cartProductList.forEach((cart) {
+      print('cart.product.category : ' + cart.product.category);
+      if(listTypeWine.contains(cart.product.category)){
+        print('true');
+        contains = true;
+      }
+    });
+    return contains;
   }
 }
 

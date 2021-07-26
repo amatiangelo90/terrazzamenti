@@ -1,67 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:mysql1/mysql1.dart';
 import 'package:url_launcher/url_launcher.dart' show canLaunch, launch;
+import 'package:uuid/uuid.dart';
 import 'package:vigneto/dao/crud_model.dart';
 import 'package:vigneto/models/cart.dart';
 import 'package:vigneto/utils/costants.dart';
 import '../reserve_order_screen.dart';
-import 'package:http/http.dart' as httpClient;
 
 class HttpService {
-
-  static sendDeliveryMessage(
-      String number,
-      String message,
-      String name,
-      String total,
-      String time,
-      List<Cart> cartItems,
-      String uniqueId,
-      String typeOrder,
-      String datePickupDelivery,
-      String hourPickupDelivery,
-      String phoneNumber,
-      String address) async {
-
-    var url = 'https://api.whatsapp.com/send/?phone=$number&text=$message';
-    try{
-
-      await launch(url);
-
-      CRUDModel crudModel = CRUDModel(ORDERS_TRACKER_IOS);
-
-      await crudModel.addOrder(
-          uniqueId,
-          name,
-          total,
-          time,
-          cartItems,
-          false,
-          typeOrder,
-          datePickupDelivery,
-          hourPickupDelivery,
-          phoneNumber,
-          address);
-    }catch(e){
-      print('Exception' + e.toString());
-      try{
-        CRUDModel crudModel = CRUDModel(ERRORS_REPORT);
-
-        await crudModel.addException(
-            name,
-            e.toString(),
-            time);
-
-      }catch(e){
-        print('Exception Crud' + e.toString());
-      }
-    }
-
-  }
 
   static sendTextMessage(
       String number,
@@ -79,41 +27,31 @@ class HttpService {
       String address,
       dynamic context) async {
 
-    /* var url = 'https://api.callmebot.com/whatsapp.php?phone=+393450330750&text=$message&apikey=530988';
+    /*var url = 'https://api.callmebot.com/whatsapp.php?phone=+393450330750&text=$message&apikey=530988';
     await launch(url);*/
 
     try {
 
-      MySqlConnection conn = await MySqlConnection.connect(ConnectionSettings(
-          host: '51.77.174.68',
-          port: 3306,
-          user: 'ventimq_user1',
-          db: 'ventimq_newfood',
-          password: 'TycAsnOeL'));
+      CRUDModel crudModel = CRUDModel(ORDERS_TRACKER_IOS);
+      var _separator = Uuid().v1();
 
-      Results result = await conn.query(
-          'INSERT INTO ce_testa (TAVOLO, COP, DATA, FATTO) VALUES (?,?,?,?)',
-          [address, int.parse(calici), Timestamp.now().toString(), 99]);
+      var _url = 'http://217.160.242.158:8080/terrazzamenti/api/sendorder?covers=$calici&table=$address&separator=$_separator';
 
-      int _currentId = result.insertId;
-      print('Result from query (row id inserted): ' + _currentId.toString());
-
-
-      cartItems.forEach((cartItem) async {
-
-        Results result = await conn.query(
-            'INSERT INTO ce_coda (LINK, CODICE, DESCR, QT, PREZZOU, ID_MENU) VALUES (?,?,?,?,?,?)',
-            [_currentId, cartItem.product.discountApplied, cartItem.product.name, cartItem.numberOfItem, cartItem.product.price, 0]);
-        print('Inserted record into CE_CODA. Record id : ${result.insertId}' );
+      cartItems.forEach((element) {
+        _url = _url + '&order=${element.product.name}' + _separator + '${element.product.discountApplied.toString()}' +_separator+ '${element.numberOfItem}' +_separator+ '${element.product.price}';
       });
 
+      /*await canLaunch(_url) ?
+       :
+      throw 'Could not launch $_url';*/
+      /*await canLaunch(_url) ?*/
 
-      Results resultUpdateQuery = await conn.query(
-          'UPDATE ce_testa SET FATTO = 0 WHERE ID = ? AND FATTO = 99',
-          [_currentId]);
 
-      print('Result from update query : ${resultUpdateQuery.insertId}');
-      CRUDModel crudModel = CRUDModel(ORDERS_TRACKER_IOS);
+      //TODO decommentare questa riga per inviare l'ordine a db
+      await launch(_url);
+
+
+      /*throw 'Could not launch $_url';*/
       await crudModel.addOrder(
           uniqueId,
           name,
@@ -125,40 +63,33 @@ class HttpService {
           datePickupDelivery,
           hourPickupDelivery,
           city,
-          address + ' - Calici: ' + calici);
+          'Tavolo: ' + address + ' - Calici: ' + calici);
 
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(backgroundColor: Colors.green ,
+          duration: Duration(seconds: 1),
           content: Text('Ordine Inviato')));
-
-
-      print('Connect to the db..');
       Timer(
           Duration(milliseconds: 2000),
               ()=> Navigator.pushNamed(context, ReserveOrderChooseScreen.id));
 
-
-
-
-
     } catch (error) {
       try{
-        CRUDModel crudModel = CRUDModel(ERRORS_REPORT);
-        await crudModel.addException(
+        CRUDModel crudModele = CRUDModel(ERRORS_REPORT);
+        await crudModele.addException(
             name,
             'Cannot launch command. $error',
             time);
+
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(backgroundColor: Colors.orangeAccent ,
             content: Text('Attenzione! Impossibile inviare l\'ordine. Errore: ${error}')));
+
       }catch (e){
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(backgroundColor: Colors.red ,
             content: Text('Error - $e')));
       }
-      Timer(
-          Duration(milliseconds: 2000),
-              ()=> Navigator.pushNamed(context, ReserveOrderChooseScreen.id));
     }
   }
 
@@ -268,7 +199,7 @@ class HttpService {
 
   }
 
-  static postData(String customerNumber, String message) async {
+  /*static postData(String customerNumber, String message) async {
     print('Seinding message to [' +customerNumber+ '] - [' + message +' ]');
 
     final Uri uri = Uri.parse("https://onyxberry.com/services/wapi/Client/sendMessage/1175/5ddcb8df845546f2fc83ac8dfb40cc0fd21cb02b");
@@ -284,14 +215,14 @@ class HttpService {
       encoding: Encoding.getByName('utf-8'),
     );
     return response.body;
-  }
+  }*/
 
-  static String refactorNumber(String number) {
+  /*static String refactorNumber(String number) {
     if(number.contains('+39')){
       return number;
     }else{
       number = '+39' + number;
     }
     return number;
-  }
+  }*/
 }

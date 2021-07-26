@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vigneto/components/icon_content.dart';
 import 'package:vigneto/components/reusable_card.dart';
+import 'package:vigneto/dao/crud_model.dart';
 import 'package:vigneto/dash_menu/admin_console_scree_reservation.dart';
 import 'package:vigneto/dash_menu/admin_console_screen_menu.dart';
+import 'package:vigneto/models/configuration.dart';
 import 'package:vigneto/reservation/reservation_screen.dart';
 import 'package:vigneto/screen/table_covers_screen.dart';
 import 'package:vigneto/utils/costants.dart';
@@ -18,7 +21,21 @@ class ReserveOrderChooseScreen extends StatefulWidget {
 
 class _ReserveOrderChooseScreenState extends State<ReserveOrderChooseScreen> {
 
+  CRUDModel crudModelConf = CRUDModel(CONFIGURATION);
+
   final _passwordController = TextEditingController();
+  List<Configuration> confList = <Configuration>[];
+
+  Future<void> retrieveConfiguration() async {
+    confList = await crudModelConf.fetchConfiguration();
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    retrieveConfiguration();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +48,17 @@ class _ReserveOrderChooseScreenState extends State<ReserveOrderChooseScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 30, 0, 10),
-                child: Image.asset('images/terrazzament.png',
-                  fit: BoxFit.contain,
+                child: Column(
+                  children: [
+                    Image.asset('images/terrazzament.png',
+                      fit: BoxFit.contain,
+                    ),
+                    Text('v. 1.0.120', style: TextStyle(fontSize: 7, color: Colors.white),),
+                  ],
                 ),
               ),
               Expanded(
+                flex: 1,
                 child: ReusableCard(
                   color: Colors.white,
                   cardChild: IconContent(label: 'Menù', icon: Icons.restaurant_menu,color: VIGNETO_BROWN, description: '',),
@@ -45,15 +68,21 @@ class _ReserveOrderChooseScreenState extends State<ReserveOrderChooseScreen> {
                 ),
               ),
               Expanded(
+                flex: 1,
                 child: ReusableCard(
                   color: Colors.white,
                   cardChild: IconContent(label: 'Prenota un tavolo', icon: Icons.calendar_today,color: VIGNETO_BROWN, description: '',),
                   onPress: () {
-                    Navigator.pushNamed(context, TableReservationScreen.id);
+                    _isReservationBlocked(confList) ?
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(backgroundColor: Colors.orange.shade500 ,
+                        content: Text('Attenzione - Raggiunta capacità massima del locale. Prenotazioni bloccate. Contattare direttamente la struttura.')))
+                        : Navigator.pushNamed(context, TableReservationScreen.id);
                   },
                 ),
               ),
               Expanded(
+                flex: 1,
                 child: ReusableCard(
                   color: Colors.white,
                   cardChild: IconContent(label: 'Settings', icon: Icons.settings,color: VIGNETO_BROWN, description: '',),
@@ -61,12 +90,10 @@ class _ReserveOrderChooseScreenState extends State<ReserveOrderChooseScreen> {
                 ),
               ),
             ],
-
           ),
         ),
       ),
     );
-
   }
 
   _showModalSettingsAccess() {
@@ -139,4 +166,18 @@ class _ReserveOrderChooseScreenState extends State<ReserveOrderChooseScreen> {
       ),
     );
   }
+
+  _isReservationBlocked(List<Configuration> confList) {
+    bool confLocked = false;
+    if(confList == null || confList.isEmpty){
+      return confLocked;
+    }
+    confList.forEach((configuration) {
+      if(configuration.key == 'reservation-status' && configuration.conf == 'locked'){
+        confLocked = true;
+      }
+    });
+    return confLocked;
+  }
+
 }

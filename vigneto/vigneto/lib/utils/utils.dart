@@ -40,8 +40,10 @@ class Utils{
 
   static List<DateTime> getUnavailableDataToday(){
     return [
-      DateTime.utc(2021,6 ,7 ,0 ,0 ,0 ,0 ,0),
-      DateTime.utc(2021,6 ,14 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,7 ,5 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,7 ,6 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,7 ,11 ,0 ,0 ,0 ,0 ,0),
+      DateTime.utc(2021,7 ,14 ,0 ,0 ,0 ,0 ,0),
       DateTime.utc(2021,6 ,15 ,0 ,0 ,0 ,0 ,0),
       DateTime.utc(2021,6 ,16 ,0 ,0 ,0 ,0 ,0),
       DateTime.utc(2021,6 ,19 ,0 ,0 ,0 ,0 ,0),

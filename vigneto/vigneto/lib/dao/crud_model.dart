@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:vigneto/models/cart.dart';
+import 'package:vigneto/models/configuration.dart';
 import 'package:vigneto/models/exception_event.dart';
 import 'package:vigneto/models/order_store.dart';
 import 'package:vigneto/models/product.dart';
@@ -14,6 +15,7 @@ class CRUDModel{
 
   Dao _dao;
   List<Product> products;
+  List<Configuration> configuration;
   List<OrderStore> customerOrders;
   List<ReservationModel> reservationsList;
 
@@ -29,6 +31,20 @@ class CRUDModel{
         .toList();
 
     return products;
+  }
+
+  Future<List<Configuration>> fetchConfiguration() async {
+    var result = await _dao.getConfiguration();
+
+    configuration = result.docs
+        .map((doc) => Configuration.fromMap(doc.data(), doc.id))
+        .toList();
+    return configuration;
+  }
+
+  Future updateConfiguration(Configuration conf, String id) async{
+    await _dao.updateDocument(conf.toJson(), id);
+    return ;
   }
 
   Future<List<Product>> fetchWine() async {
@@ -90,6 +106,12 @@ class CRUDModel{
     await _dao.removeDocument(id) ;
     return ;
   }
+
+  Future removeConfiguration(String id) async{
+    await _dao.removeDocument(id) ;
+    return ;
+  }
+  
   Future updateProduct(Product data, String id) async{
     await _dao.updateDocument(data.toJson(), id) ;
     return ;
@@ -101,10 +123,8 @@ class CRUDModel{
   }
 
   Future addProduct(Product data) async{
-
     await _dao.addDocument(data.toJson());
     return ;
-
   }
 
   Future addException(
@@ -209,4 +229,11 @@ class CRUDModel{
     await _dao.addDocument(reservationModel.toJson());
     return ;
   }
+
+  Future<void> addConfiguration(String id, String key, String conf) async {
+    Configuration configuration = Configuration(id, key, conf);
+    await _dao.addDocument(configuration.toJson());
+    return ;
+  }
+
 }

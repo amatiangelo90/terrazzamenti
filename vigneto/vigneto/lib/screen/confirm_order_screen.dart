@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:vigneto/models/cart.dart';
 import 'package:vigneto/models/reservation_model.dart';
 import 'package:vigneto/screen/reserve_order_screen.dart';
@@ -354,9 +353,9 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                                           _phoneNumberController.value.text,
                                           this.widget.tableNumber,
                                           context);
-                                      Timer(
+                                      /*Timer(
                                           Duration(milliseconds: 2000),
-                                              ()=> Navigator.pushNamed(context, ReserveOrderChooseScreen.id));
+                                              ()=> Navigator.pushNamed(context, ReserveOrderChooseScreen.id));*/
                                     }catch(e){
                                       print('Exception Crud: ' + e.toString());
                                     }
@@ -419,11 +418,11 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
   }
 
   void updateButtonAvailability() {
-    setState(() {
+    /*setState(() {
       if(_isButtonEnabled){
         _isButtonEnabled = false;
       }
-    });
+    });*/
   }
 
   String getDateByHour() {

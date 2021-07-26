@@ -58,7 +58,7 @@ class _TableCoversScreenState extends State<TableCoversScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(_tableSelected,
+                Text('Tavolo: ' + _tableSelected,
                   style: TextStyle(fontSize: 25.0,
                       color: Colors.white,
                       fontFamily: 'LoraFont'),),
@@ -103,13 +103,7 @@ class _TableCoversScreenState extends State<TableCoversScreen> {
                       icon: FontAwesomeIcons.plus,
                       function: () {
                         setState(() {
-                          if(_covers < 8){
-                            _covers = _covers + 1;
-                          }else{
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(SnackBar(backgroundColor: Colors.red.shade500 ,
-                                content: Text('Avvertenza Covid19 - I coperti per tavolo possono essere al massimo 8')));
-                          }
+                          _covers = _covers + 1;
                         });
                       },
                     ),
@@ -165,7 +159,7 @@ class _TableCoversScreenState extends State<TableCoversScreen> {
                     onTap: () {
                       setState(() {
                         _isTableSelected = true;
-                        _tableSelected = 'Tavolo ${index+1}';
+                        _tableSelected = (index+1).toString();
                       });
                     },
                     child: Center(

@@ -228,7 +228,9 @@ class _CartScreenState extends State<CartScreen> {
                                   color: this.widget.cartItems.isNotEmpty ? VIGNETO_BROWN : Colors.grey,
                                   elevation: 5.0,
                                   onPressed: (){
-                                    this.widget.cartItems.isNotEmpty ? showDialog(
+
+                                    this.widget.cartItems.isNotEmpty ?
+                                    isCartProductContainsWine(this.widget.cartItems) ? showDialog(
                                         context: context,
                                         builder: (context) {
                                           return ConfirmScreen(
@@ -237,6 +239,14 @@ class _CartScreenState extends State<CartScreen> {
                                             uniqueId: this.widget.uniqueId,
                                             covers: this.widget.covers,
                                             tableNumber: this.widget.tableNumber,
+                                          );
+                                        }
+                                    ) : showDialog(
+                                        context: context,
+                                        builder: (context){
+                                          return AlertDialog(
+                                            title: Center(child: Text("Inserire almeno una bottiglia di vino nell\'ordine per procedere", style: TextStyle(color: Colors.black, fontSize: 20.0, fontFamily: 'LoraFont'))),
+                                            content: Text(''),
                                           );
                                         }
                                     ) : showDialog(
@@ -370,4 +380,23 @@ class _CartScreenState extends State<CartScreen> {
       ),
     );
   }
+
+
+
+
+  bool isCartProductContainsWine(List<Cart> cartProductList) {
+
+    bool contains = false;
+
+    cartProductList.forEach((cart) {
+      print('cart.product.category : ' + cart.product.category);
+      if(listTypeWine.contains(cart.product.category)){
+        print('true');
+        contains = true;
+      }
+    });
+    return contains;
+  }
+
+
 }

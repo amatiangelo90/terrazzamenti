@@ -2,6 +2,7 @@ import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:expansion_card/expansion_card.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:vigneto/models/configuration.dart';
 import 'package:vigneto/models/reservation_model.dart';
 import 'package:vigneto/dao/crud_model.dart';
 import 'package:vigneto/models/cart.dart';
@@ -28,13 +29,14 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
   List<Product> pugliesitaProductList = <Product>[];
   List<Product> wineProductList = <Product>[];
   DateTime _selectedDateTime = new DateTime.now();
-
+  CRUDModel crudModelConf = CRUDModel(CONFIGURATION);
   double width;
   double height;
 
   final _datePikerController = DatePickerController();
 
   List<OrderStore> ordersList = <OrderStore>[];
+  List<Configuration> confList = <Configuration>[];
 
   ScrollController scrollViewController = ScrollController();
 
@@ -46,9 +48,22 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
     });
   }
 
-  void updateStatus(){
+  Future<void> updateStatus() async {
+    await retrieveConfiguration();
     setState((){});
   }
+
+
+  @override
+  void initState() {
+    super.initState();
+    retrieveConfiguration();
+  }
+
+  Future<void> retrieveConfiguration() async {
+    confList = await crudModelConf.fetchConfiguration();
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -104,10 +119,6 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
               icon: Icon(Icons.wine_bar),
               label: 'Vini',
             ),
-            /*BottomNavigationBarItem(
-              icon: Icon(Icons.book_online),
-              label: 'Ordini',
-            ),*/
             BottomNavigationBarItem(
               icon: Icon(Icons.book_online),
               label: 'Ordini',
@@ -137,7 +148,7 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
 
 
     productList.forEach((product) {
-      if(listTypeWine.contains(product.category)){
+      if(listTypeBeverage.contains(product.category)){
         items.add(
           InkWell(
             onTap: () => Navigator.push(context,
@@ -337,11 +348,9 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
     );
   }
   Future<List<Widget>> createOrdersListByDateTime(DateTime date, String schema) async{
+
     List<Widget> items = <Widget>[];
     try{
-
-      print(date);
-
       String selectedDatePickupDelivery = Utils.getWeekDay(date.weekday) +" ${date.day} " + Utils.getMonthDay(date.month);
       CRUDModel crudModel = CRUDModel(schema);
 
@@ -946,7 +955,7 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               DatePicker(
-                DateTime.now().subtract(Duration(days: 4, hours: 0, minutes: 0, seconds: 0)),
+                DateTime.now().subtract(Duration(days: 9, hours: 0, minutes: 0, seconds: 0)),
                 initialSelectedDate: DateTime.now(),
                 inactiveDates: Utils.getUnavailableData(),
                 dateTextStyle: TextStyle(color: Colors.green, fontSize: 16.0),
@@ -1006,8 +1015,29 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              RaisedButton(
+
+                child: Text(_isReservationBlocked(confList) ? 'Sblocca Prenotazioni' : 'Blocca Prenotazioni' ,style: TextStyle(color: Colors.white, fontSize: 20.0, fontFamily: 'LoraFont')),
+                color: _isReservationBlocked(confList) ? Colors.green :  Colors.red,
+                elevation: 5.0,
+                onPressed: () async {
+                  if(_isReservationBlocked(confList)){
+                    removeConfiguration(confList);
+                    updateStatus();
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(backgroundColor: Colors.green ,
+                        content: Text('Prenotazioni Abilitate')));
+                  }else{
+                    await addConfiguration();
+                    updateStatus();
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(backgroundColor: Colors.red.shade500 ,
+                        content: Text('Prenotazioni Disabilitate')));
+                  }
+                },
+              ),
               DatePicker(
-                DateTime.now().subtract(Duration(days: 4, hours: 0, minutes: 0, seconds: 0)),
+                DateTime.now().subtract(Duration(days: 9, hours: 0, minutes: 0, seconds: 0)),
                 initialSelectedDate: DateTime.now(),
                 inactiveDates: Utils.getUnavailableData(),
                 dateTextStyle: TextStyle(color: VIGNETO_BROWN, fontSize: 16.0),
@@ -1209,6 +1239,31 @@ class _AdminConsoleMenuScreenState extends State<AdminConsoleMenuScreen> {
       );
     }
     return items;
+  }
+
+  _isReservationBlocked(List<Configuration> confList) {
+    bool confLocked = false;
+    if(confList == null || confList.isEmpty){
+      return confLocked;
+    }
+    confList.forEach((configuration) {
+      if(configuration.key == 'reservation-status' && configuration.conf == 'locked'){
+        confLocked = true;
+      }
+    });
+    return confLocked;
+  }
+
+  Future<void> addConfiguration() async {
+    await crudModelConf.addConfiguration('', 'reservation-status','locked');
+  }
+
+  void removeConfiguration(List<Configuration> confList) {
+    confList.forEach((configuration) async {
+      if(configuration.key == 'reservation-status' && configuration.conf == 'locked'){
+        await crudModelConf.removeConfiguration(configuration.id);
+      }
+    });
   }
 }
 
