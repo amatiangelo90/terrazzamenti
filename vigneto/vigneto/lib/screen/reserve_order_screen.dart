@@ -74,10 +74,8 @@ class _ReserveOrderChooseScreenState extends State<ReserveOrderChooseScreen> {
                   cardChild: IconContent(label: 'Prenota un tavolo', icon: Icons.calendar_today,color: VIGNETO_BROWN, description: '',),
                   onPress: () {
                     _isReservationBlocked(confList) ?
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(backgroundColor: Colors.orange.shade500 ,
-                        content: Text('Attenzione - Raggiunta capacità massima del locale. Prenotazioni bloccate. Contattare direttamente la struttura.')))
-                        : Navigator.pushNamed(context, TableReservationScreen.id);
+                   Navigator.pushNamed(context, TableReservationScreen.id) :
+                   Navigator.pushNamed(context, TableReservationScreen.id),
                   },
                 ),
               ),

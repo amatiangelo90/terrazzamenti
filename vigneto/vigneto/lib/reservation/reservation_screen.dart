@@ -12,7 +12,10 @@ import 'package:vigneto/utils/utils.dart';
 
 class TableReservationScreen extends StatefulWidget {
 
+  final bool covers;
   static String id = 'reservation';
+
+  TableReservationScreen(this.covers);
 
   @override
   _TableReservationScreenState createState() => _TableReservationScreenState();
